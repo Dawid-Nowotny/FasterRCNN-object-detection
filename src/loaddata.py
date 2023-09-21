@@ -3,14 +3,14 @@ from torchvision.datasets import VOCDetection
 import joblib
 
 from .transforms import data_transforms
-from .config import DATA_PATH, BATCH_SIZE
+from .config import DATA_PATH, CACHE_PATH, BATCH_SIZE
 
-def load_data():
+def load_data(year=2008):
     try:
-        train_dataset = joblib.load('cached_data.pkl')
+        train_dataset = joblib.load(CACHE_PATH + 'cached_data' + str(year) + '.pkl')
     except FileNotFoundError:
-        train_dataset = VOCDetection(root=DATA_PATH, year='2008', transform=data_transforms, download=True)
-        joblib.dump(train_dataset, 'cached_data.pkl')
+        train_dataset = VOCDetection(root=DATA_PATH, year=str(year), transform=data_transforms, download=True)
+        joblib.dump(train_dataset, CACHE_PATH + 'cached_data' + str(year) + '.pkl')
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 

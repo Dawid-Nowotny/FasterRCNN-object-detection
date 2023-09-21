@@ -1,6 +1,6 @@
 venv/
 __pycache__
 
-cached_data.pkl
+cache/
 
 data/

@@ -2,4 +2,10 @@ DATA_PATH = 'data/'
 
 CACHE_PATH = 'cache/'
 
-BATCH_SIZE = 32
+MODELS_PATH = 'saved_models/'
+
+BATCH_SIZE = 4
+
+NUM_CLASSES = 20
+
+LOG_INTERVAL = 10

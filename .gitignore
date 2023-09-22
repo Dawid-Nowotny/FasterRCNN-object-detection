@@ -2,7 +2,7 @@ venv/
 __pycache__
 
 cache/
-
 data/
-
 saved_models/
+
+testing.py

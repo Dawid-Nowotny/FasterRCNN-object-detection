@@ -4,3 +4,5 @@ __pycache__
 cache/
 
 data/
+
+saved_models/

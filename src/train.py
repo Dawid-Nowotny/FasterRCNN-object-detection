@@ -3,8 +3,8 @@ from torch.optim import SGD
 from torch.optim.lr_scheduler import StepLR
 from tqdm import tqdm
 
-from .prepare_data import prepare_data
-from .save_model import save_model
+from src.data_processing.prepare_data import prepare_data
+from src.models.save_model import save_model
 
 def train(model, train_loader, num_epochs=1, learning_rate=0.001, use_cuda=True):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")

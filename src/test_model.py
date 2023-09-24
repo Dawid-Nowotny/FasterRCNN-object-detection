@@ -2,14 +2,14 @@ import torch
 from torchvision.ops import box_iou
 from tqdm import tqdm
 
-from .prepare_data import prepare_data
+from src.data_processing.prepare_data import prepare_data
 
 def test_model(model, train_loader, use_cuda=True, iou_threshold=0.6):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
     train_loader = tqdm(train_loader, total=len(train_loader))
-
+    
     correct = 0
     total = 0
 

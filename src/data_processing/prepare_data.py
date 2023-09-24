@@ -1,6 +1,6 @@
 import torch
 
-from .label_mapping import label_mapping
+from src.image_detection.label_mapping import label_mapping
 
 def prepare_data(targets):
     boxes_list = []

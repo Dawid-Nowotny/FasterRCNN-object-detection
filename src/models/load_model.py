@@ -1,7 +1,7 @@
 import torch
 
 from .create_fasterrcnn_mobilenet_v3_large_320_fpn import create_fasterrcnn_mobilenet_v3_large_320_fpn
-from .config import MODELS_PATH
+from ..config import MODELS_PATH
 
 def load_model(name):
     try:

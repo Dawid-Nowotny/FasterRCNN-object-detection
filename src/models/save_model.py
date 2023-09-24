@@ -1,7 +1,7 @@
 import torch
 import datetime
 
-from .config import MODELS_PATH
+from ..config import MODELS_PATH
 
 def save_model(model):
     current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

@@ -3,7 +3,7 @@ from torchvision.datasets import VOCDetection
 import joblib
 
 from .transforms import data_transforms
-from .config import DATA_PATH, CACHE_PATH, BATCH_SIZE
+from ..config import DATA_PATH, CACHE_PATH, BATCH_SIZE
 
 def collate_fn(batch):
     return tuple(zip(*batch))

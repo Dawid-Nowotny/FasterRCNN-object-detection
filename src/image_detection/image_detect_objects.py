@@ -1,7 +1,7 @@
 import torch
 from torchvision.transforms import functional as F
 
-from src.label_mapping import label_mapping
+from .label_mapping import label_mapping
 
 def image_detect_objects(model, image, iou_threshold=0.5, use_cuda=True):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")

@@ -30,7 +30,7 @@ def process_video(model, video, iou_threshold=0.5, use_cuda=True):
 
             if box is not None:
                 x, y, w, h = box
-                color = tuple(int(val * 255) for val in label_colors.get(label, (0, 0, 0)))
+                color = label_colors.get(label, (0, 0, 0))
                 
                 text_x, text_y = x, y - 10
                 if text_y < 10:

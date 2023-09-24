@@ -1,22 +1,21 @@
 label_colors = {
-    'aeroplane': (1.0, 0.0, 0.0),      # Red
-    'bicycle': (0.0, 1.0, 0.0),        # Green
-    'bird': (0.0, 0.0, 1.0),           # Blue
-    'boat': (1.0, 1.0, 0.0),           # Yellow
-    'bottle': (1.0, 0.0, 1.0),         # Magenta
-    'bus': (0.0, 1.0, 1.0),            # Cyan
-    'car': (0.5, 0.0, 0.0),            # Maroon
-    'cat': (0.0, 0.5, 0.0),            # Green
-    'chair': (0.0, 0.0, 0.5),          # Navy
-    'cow': (0.5, 0.5, 0.0),            # Olive
-    'diningtable': (0.5, 0.0, 0.5),    # Purple
-    'dog': (0.0, 0.5, 0.5),            # Teal
-    'horse': (0.5, 0.5, 0.5),          # Gray
-    'motorbike': (0.25, 0.0, 0.0),     # Dark Red
-    'person': (0.0, 0.25, 0.0),        # Dark Green
-    'pottedplant': (0.0, 0.0, 0.25),   # Dark Blue
-    'sheep': (0.25, 0.25, 0.0),        # Dark Yellow
-    'sofa': (0.25, 0.0, 0.25),         # Dark Magenta
-    'train': (0.0, 0.25, 0.25),        # Dark Cyan
-    'tvmonitor': (0.75, 0.75, 0.75)    # Light Gray
+    'aeroplane': (0, 0, 255),       # Red (BGR)
+    'bicycle': (0, 255, 0),        # Green (BGR)
+    'bird': (255, 0, 0),           # Blue (BGR)
+    'boat': (0, 255, 255),         # Yellow (BGR)
+    'bottle': (255, 0, 255),       # Magenta (BGR)
+    'bus': (255, 255, 0),          # Cyan (BGR)
+    'car': (0, 0, 128),            # Maroon (BGR)
+    'cat': (0, 128, 0),            # Green (BGR)
+    'chair': (128, 0, 0),          # Navy (BGR)
+    'cow': (0, 128, 128),          # Olive (BGR)
+    'diningtable': (128, 0, 128),  # Purple (BGR)
+    'dog': (128, 128, 128),        # Gray (BGR)
+    'motorbike': (0, 0, 64),       # Dark Red (BGR)
+    'person': (0, 64, 0),          # Dark Green (BGR)
+    'pottedplant': (64, 0, 0),     # Dark Blue (BGR)
+    'sheep': (64, 64, 0),          # Dark Yellow (BGR)
+    'sofa': (64, 0, 64),           # Dark Magenta (BGR)
+    'train': (0, 64, 64),          # Dark Cyan (BGR)
+    'tvmonitor': (192, 192, 192)   # Light Gray (BGR)
 }

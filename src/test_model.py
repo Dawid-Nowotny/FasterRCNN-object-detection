@@ -4,17 +4,18 @@ from tqdm import tqdm
 
 from src.data_processing.prepare_data import prepare_data
 
-def test_model(model, train_loader, use_cuda=True, iou_threshold=0.6):
+def test_model(model, test_loader, use_cuda, iou_threshold):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
     model.to(device)
+
     model.eval()
-    train_loader = tqdm(train_loader, total=len(train_loader))
+    test_loader = tqdm(test_loader, total=len(test_loader))
     
     correct = 0
     total = 0
 
     with torch.no_grad():
-        for images, targets in train_loader:
+        for images, targets in test_loader:
             images = [img.to(device) for img in images]
             boxes_list, labels_list = prepare_data(targets)
 
@@ -34,4 +35,4 @@ def test_model(model, train_loader, use_cuda=True, iou_threshold=0.6):
 
                 total += 1
 
-    print(f"Accuracy: {correct / total * 100:.2f}%")
+    return round(correct / total * 100, 2)

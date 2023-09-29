@@ -1,10 +1,15 @@
 import matplotlib.pyplot as plt
+import numpy as np
+import cv2
+
+from src.label_colors import label_colors
 
 def display_example(dataset, idx):
     image, target = dataset[idx]
     objects = target['annotation']['object']
     
-    plt.imshow(image.permute(1, 2, 0))
+    image_np = image.permute(1, 2, 0).numpy()
+    image_bgr = cv2.cvtColor((image_np * 255).astype(np.uint8), cv2.COLOR_RGB2BGR)
     
     if not isinstance(objects, list):
         objects = [objects]
@@ -19,7 +24,13 @@ def display_example(dataset, idx):
         )
 
         label = obj['name']
-        plt.gca().add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, fill=False, edgecolor='red', linewidth=2))
-        plt.text(xmin, ymin - 5, label, color='red', fontsize=12, backgroundcolor='white')
+        color = label_colors.get(label, (0, 0, 0))
+        
+        cv2.rectangle(image_bgr, (xmin, ymin), (xmax, ymax), color, 2)
+        cv2.putText(image_bgr, label, (xmin, ymin - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
     
+    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+    
+    plt.imshow(image_rgb)
+    plt.axis('off')
     plt.show()

@@ -4,7 +4,7 @@ from src.utils.get_screen_resolution import get_screen_resolution
 from src.label_colors import label_colors
 from src.image_detection.image_detect_objects import image_detect_objects
 
-def process_video(model, video, iou_threshold=0.5, use_cuda=True):
+def process_video(model, video, iou_threshold=0.5, score_threshold=0.6, use_cuda=True):
     cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
     cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
     screen_width, screen_height = get_screen_resolution()
@@ -21,7 +21,7 @@ def process_video(model, video, iou_threshold=0.5, use_cuda=True):
         if cv2.getWindowProperty('Video', cv2.WND_PROP_VISIBLE) < 1:
             break
 
-        detections = image_detect_objects(model, frame, iou_threshold, use_cuda)
+        detections = image_detect_objects(model, frame, iou_threshold, score_threshold, use_cuda)
 
         for detection in detections:
             label = detection['label']

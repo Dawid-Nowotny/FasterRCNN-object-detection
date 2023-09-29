@@ -1,1 +1,1 @@
-# rt-image-video-classifier
+# FasterRCNN object detection

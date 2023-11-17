@@ -9,9 +9,6 @@ from ..config import DATA_PATH, CACHE_PATH, BATCH_SIZE
 def collate_fn(batch):
     return tuple(zip(*batch))
 
-def collate_fn(batch):
-    return tuple(zip(*batch))
-
 def load_data(year=2012, train_split=0.7, val_split=0.2, test_split=0.1):
     try:
         train_dataset = joblib.load(CACHE_PATH + 'cached_data_' + str(year) + '.pkl')

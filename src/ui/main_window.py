@@ -7,14 +7,17 @@ from PyQt5.QtGui import QPixmap
 from PyQt5 import QtCore, QtWidgets, QtGui
 
 from .file_menubar import FileMenubar
+from src.ui.dataset.dataset_menu import DatasetMenu
 
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
+from .styles import MENU_STYLE
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.__set_geometry()
         self.__init_GUI()
+        self.__init_menubar()
         
     def __set_geometry(self):
         self.showNormal()
@@ -22,11 +25,18 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
 
         screen_size = QApplication.primaryScreen().size()
-        self.window_x = int((screen_size.width() - WINDOW_WIDTH) / 2)
-        self.window_y = int((screen_size.height() - WINDOW_HEIGHT) / 2)
+        self.__window_x = int((screen_size.width() - WINDOW_WIDTH) / 2)
+        self.__window_y = int((screen_size.height() - WINDOW_HEIGHT) / 2)
 
-        self.setGeometry(self.window_x, self.window_y, WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.setGeometry(self.__window_x, self.__window_y, WINDOW_WIDTH, WINDOW_HEIGHT)
 
     def __init_GUI(self):
+        pass
+
+    def __init_menubar(self):
         menubar = FileMenubar()
+
         self.setMenuBar(menubar)
+        menubar.setStyleSheet(MENU_STYLE)
+
+        menubar.addMenu(DatasetMenu(self))

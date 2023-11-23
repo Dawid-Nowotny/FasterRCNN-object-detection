@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import QMenuBar, QAction, QApplication, QDialog, QMessageBox
-from PyQt5.QtGui import QKeySequence
 
 class FileMenubar(QMenuBar):
     def __init__(self):
@@ -10,5 +9,5 @@ class FileMenubar(QMenuBar):
         close_app = QAction("Zakończ", self)
         close_app.triggered.connect(lambda: QApplication.quit())
 
-        file_menu.addSeparator()
+        self.addSeparator()
         file_menu.addAction(close_app)

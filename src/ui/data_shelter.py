@@ -34,4 +34,9 @@ class DataShelter:
             cls._instance.std2 = 0.22
             cls._instance.std3 = 0.22
 
+            #dataset
+            cls._instance.chosen_year_index = 0
+            cls._instance.chosen_year_text = 2008
+            cls._instance.batch_size = 4
+
         return cls._instance

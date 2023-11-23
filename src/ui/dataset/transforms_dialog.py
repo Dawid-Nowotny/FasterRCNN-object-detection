@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QHBoxLayout, QDialog, QSpinBox, QCheckBox, QDoubleSpinBox, QPushButton, QVBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QHBoxLayout, QDialog, QSpinBox, QCheckBox, QDoubleSpinBox, QPushButton, QVBoxLayout, QMessageBox, QLabel
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt
 
@@ -59,7 +59,6 @@ class SetTransformsDialog(QDialog):
 
 
     def __set_layouts(self):
-        #self.setMinimumSize(550, 550)
         vbox = QVBoxLayout()
         resize_hbox = QHBoxLayout()
         mean_hbox = QHBoxLayout()
@@ -97,7 +96,9 @@ class SetTransformsDialog(QDialog):
         std_hbox.addWidget(self.__std2)
         std_hbox.addWidget(self.__std3)
 
+        vbox.addWidget(QLabel("Mean", self), alignment=QtCore.Qt.AlignCenter)
         vbox.addLayout(mean_hbox)
+        vbox.addWidget(QLabel("Std", self), alignment=QtCore.Qt.AlignCenter)
         vbox.addLayout(std_hbox)
 
         vbox.addWidget(self.__ok_button)

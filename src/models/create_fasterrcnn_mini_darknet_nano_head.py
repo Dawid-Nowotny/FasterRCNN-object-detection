@@ -23,10 +23,10 @@ class TwoMLPHead(nn.Module):
         return x
     
 class FastRCNNPredictor(nn.Module):
-    def __init__(self, in_channels, num_classes):
+    def __init__(self, in_channels):
         super().__init__()
-        self.cls_score = nn.Linear(in_channels, num_classes)
-        self.bbox_pred = nn.Linear(in_channels, num_classes * 4)
+        self.cls_score = nn.Linear(in_channels, NUM_CLASSES)
+        self.bbox_pred = nn.Linear(in_channels, NUM_CLASSES * 4)
 
     def forward(self, x):
         if x.dim() == 4:
@@ -41,10 +41,10 @@ class FastRCNNPredictor(nn.Module):
         return scores, bbox_deltas
 
 class DarkNet(nn.Module):
-    def __init__(self, initialize_weights=True, num_classes=20):
+    def __init__(self, initialize_weights=True):
         super(DarkNet, self).__init__()
 
-        self.num_classes = num_classes
+        self.num_classes = NUM_CLASSES
         self.features = self._create_conv_layers()
         self.pool = self._pool()
         self.fcs = self._create_fc_layers()
@@ -112,7 +112,7 @@ class DarkNet(nn.Module):
     
     def _create_fc_layers(self):
         fc_layers = nn.Sequential(
-            nn.Linear(128, self.num_classes)
+            nn.Linear(128, NUM_CLASSES)
         )
         return fc_layers
 
@@ -135,8 +135,8 @@ class DarkNet(nn.Module):
         x = self.fcs(x)
         return x
     
-def create_fasterrcnn_mini_darknet_nano_head(num_classes):
-    backbone = DarkNet(num_classes=NUM_CLASSES).features
+def create_fasterrcnn_mini_darknet_nano_head():
+    backbone = DarkNet().features
 
     backbone.out_channels = 128
 
@@ -158,7 +158,7 @@ def create_fasterrcnn_mini_darknet_nano_head(num_classes):
         representation_size=representation_size
     )
 
-    box_predictor = FastRCNNPredictor(representation_size, num_classes)
+    box_predictor = FastRCNNPredictor(representation_size)
 
     model = FasterRCNN(
         backbone=backbone,

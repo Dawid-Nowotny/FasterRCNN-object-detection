@@ -37,7 +37,9 @@ class DatasetMenu(QMenu):
 
         self.addAction(load_dataset)
         self.addAction(set_transforms)
+        self.addSeparator()
         self.addAction(show_sample)
+        self.addSeparator()
         self.addAction(clear_dataset)
         self.addAction(clear_cache)
 

@@ -36,12 +36,19 @@ class DatasetMenu(QMenu):
         dialog = LoadDatasetDialog()
         dialog.exec_()
 
+        if not dialog.finished:
+            return
+        
+        dialog.finished = False
+
+        dialog.lower()
         data_shelter = DataShelter()
         transform = create_transforms()
         
         self.__init_loader_dialog()
 
         self.__loader_thread = DataLoaderThread(data_shelter.chosen_year_text, data_shelter.batch_size, transform)
+        self.__loader_thread.data_loaded.connect(self.__on_data_loaded)
         self.__loader_thread.finished.connect(self.__on_loading_finished)
         self.__loader_thread.start()
 
@@ -50,6 +57,9 @@ class DatasetMenu(QMenu):
     def __on_loading_finished(self):
         self.__loader_dialog.close()
         show_alert("Sukces!", "Zbiór danych został załadowany!", QMessageBox.Information)
+
+    def __on_data_loaded(self, data):
+        train_loader, val_loader, test_loader = data
 
     def __on_dialog_close(self, event):
         if self.__loader_thread.isRunning():
@@ -88,5 +98,5 @@ class DatasetMenu(QMenu):
     def __clear_dataset(self):
         pass
 
-    def show_sample(self):
+    def __show_sample(self):
         pass

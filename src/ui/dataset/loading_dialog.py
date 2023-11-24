@@ -14,6 +14,8 @@ class LoadDatasetDialog(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         
+        self.finished = False
+
         self.__combo_box_year = QComboBox()
         self.__combo_box_year.addItems(voc_year_options)
 
@@ -60,4 +62,5 @@ class LoadDatasetDialog(QDialog):
             show_alert("Błąd!", f"Error: {str(e)}\nNie udało się wykonac operacji", QMessageBox.Critical)
             self.close()
 
+        self.finished = True
         self.close()

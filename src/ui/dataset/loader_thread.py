@@ -4,6 +4,7 @@ from src.data_processing.load_PASCAL_VOC import load_PASCAL_VOC
 
 class DataLoaderThread(QThread):
     finished = pyqtSignal()
+    data_loaded = pyqtSignal(object)
 
     def __init__(self, year, batch_size, transform):
         super().__init__()
@@ -13,4 +14,5 @@ class DataLoaderThread(QThread):
 
     def run(self):
         train_loader, val_loader, test_loader = load_PASCAL_VOC(self.year, self.batch_size, self.transform)
+        self.data_loaded.emit((train_loader, val_loader, test_loader))
         self.finished.emit()

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout, QDesktopWidget, QMenu, QAction, QStyle
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout, QDesktopWidget, QMenu, QAction, QFileDialog
 from PyQt5.QtGui import QMovie
 from PyQt5 import QtCore
 
@@ -11,6 +11,11 @@ from src.models.create_fasterrcnn_mobilenet_v3_large_320_fpn import create_faste
 from src.models.create_fasterrcnn_mobilenet_v3_large_fpn import create_fasterrcnn_mobilenet_v3_large_fpn
 from src.models.create_fasterrcnn_resnet50_fpn_v2 import create_fasterrcnn_resnet50_fpn_v2
 
+from src.models.load_model import load_model
+from src.models.save_model import save_model
+
+from src.config import MODELS_PATH
+
 class ModelMenu(QMenu):
     def __init__(self, parent=None):
         super().__init__("Model", parent)
@@ -22,7 +27,7 @@ class ModelMenu(QMenu):
         clear_model = QAction("Wyczyść załadowany model", self)
         clear_model.triggered.connect(lambda: self.__clear_model())
 
-        load_model = QAction("Wczytaj wytrenowany model", self)
+        load_model = QAction("Wczytaj model z pliku", self)
         load_model.triggered.connect(lambda: self.__load_model())
 
         save_model = QAction("Zapisz model", self)
@@ -68,7 +73,45 @@ class ModelMenu(QMenu):
         show_alert("Wiadomość!", "Model został wyczyszczony.", QMessageBox.Information)
 
     def __load_model(self):
-        pass
+        if self.parent.model is not None:
+            show_alert("Wiadomość!", "Model jest już załadowany.", QMessageBox.Information)
+            return
+        
+        dialog = ModelDialog(self)
+        dialog.exec_()
+
+        if not dialog.finished:
+            return
+        
+        dialog.finished = False
+
+        options = QFileDialog.Options()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Wybierz plik modelu", MODELS_PATH, "PyTorch Model Files (*.pth)", options=options)
+        
+        if file_name:
+            model = load_model(dialog.option, file_name)
+
+            if model is None:
+                show_alert("Ostrzeżenie!", "Błąd podczas ładowaniu modelu, upewnij się, że:\
+                            \n- ładujesz model Faster R-CNN z odpowiednim backbon'em \
+                            \n- jest on wytrenowany.", QMessageBox.Warning)
+                return
+
+            self.parent.model = model
+            show_alert("Wiadomość!", "Model został załadowany.", QMessageBox.Information)
 
     def __save_model(self):
-        pass
+        if self.parent.model is None:
+            show_alert("Wiadomość!", "Nie ma modelu do zapisania.", QMessageBox.Information)
+            return
+
+        options = QFileDialog.Options()
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save Model As", MODELS_PATH, "PyTorch Model Files (*.pth)", options=options)
+
+        if file_name:
+            value = save_model(self.parent.model, file_name)
+
+            if value is True:
+                show_alert("Wiadomość!", "Model został pomyślnie zapisany.", QMessageBox.Information)
+            else:
+                show_alert("Błąd!", "Błąd podczas zapisu modelu.", QMessageBox.Critical)

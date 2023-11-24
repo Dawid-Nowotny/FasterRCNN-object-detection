@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QListWidget, QPushButton
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
 from src.ui.config import model_options

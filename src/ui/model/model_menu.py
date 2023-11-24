@@ -1,10 +1,7 @@
-from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout, QDesktopWidget, QMenu, QAction, QFileDialog
-from PyQt5.QtGui import QMovie
-from PyQt5 import QtCore
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QMenu, QAction, QFileDialog
 
 from src.ui.show_alert import show_alert
 from .model_dialog import ModelDialog
-from src.ui.show_alert import show_alert
 
 from src.models.create_fasterrcnn_mini_darknet_nano_head import create_fasterrcnn_mini_darknet_nano_head
 from src.models.create_fasterrcnn_mobilenet_v3_large_320_fpn import create_fasterrcnn_mobilenet_v3_large_320_fpn

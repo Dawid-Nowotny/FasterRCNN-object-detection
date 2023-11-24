@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog
-from PyQt5.QtGui import QIcon
-from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout
+from PyQt5.QtGui import QMovie
+from PyQt5 import QtCore
 
 from .transforms_dialog import SetTransformsDialog
 from .loading_dialog import LoadDatasetDialog
@@ -54,15 +54,32 @@ class DatasetMenu(QMenu):
     def __on_dialog_close(self, event):
         if self.__loader_thread.isRunning():
             self.__loader_thread.terminate()
-            show_alert("Przerwano!", "Ładowanie zbioru danych zostało przerwane!", QMessageBox.Warning)
+            show_alert("Przerwano!", "Ładowanie zbioru danych zostało przerwane!", QMessageBox.Warning, self.__loader_dialog)
+            self.__loader_dialog.lower()
             event.accept()
 
     def __init_loader_dialog(self):
+        screen_geometry = QApplication.desktop().screenGeometry()
         self.__loader_dialog = QDialog(self)
         self.__loader_dialog.setModal(True)
-        self.__loader_dialog.setWindowTitle("Proszę czekać")
+        self.__loader_dialog.setWindowTitle("Ładowanie zbioru danych")
         self.__loader_dialog.setMinimumSize(200, 100)
+        self.__loader_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.__loader_dialog.closeEvent = self.__on_dialog_close
+
+        gif_label = QLabel(self.__loader_dialog)
+        movie = QMovie("src\\ui\\resources\\spinner.gif")
+        movie.setScaledSize(QtCore.QSize(120, 120))
+        gif_label.setMovie(movie)
+        movie.start()
+
+        layout = QVBoxLayout(self.__loader_dialog)
+        layout.addWidget(QLabel("Trwa ładowanie", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
+        layout.addWidget(QLabel("Może to zająć od kilku do kilkunastu minut", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.setAlignment(QtCore.Qt.AlignCenter)
+        self.__loader_dialog.setLayout(layout)
+        self.__loader_dialog.move(int((screen_geometry.width() - self.width()) / 2), int((screen_geometry.height() - self.height()) / 2 - 100))
 
     def __set_transforms(self):
         dialog = SetTransformsDialog()

@@ -1,19 +1,24 @@
-from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout, QDesktopWidget
 from PyQt5.QtGui import QMovie
 from PyQt5 import QtCore
+
+import random
 
 from .transforms_dialog import SetTransformsDialog
 from .loading_dialog import LoadDatasetDialog
 from src.ui.data_shelter import DataShelter
 from .loader_thread import DataLoaderThread
+from src.ui.show_alert import show_alert
 
 from src.data_processing.transforms import create_transforms
-
-from src.ui.show_alert import show_alert
+from src.utils.display_example import display_example
+from src.utils.clear_cache_directory import clear_cache_directory
 
 class DatasetMenu(QMenu):
     def __init__(self, parent):
         super().__init__("Zbiór danych", parent)
+        self.parent = parent
+        self.screen_geometry = QApplication.desktop().screenGeometry()
 
         load_dataset = QAction("Wczytaj zbiór danych", self)
         load_dataset.triggered.connect(lambda: self.__load_dataset())
@@ -21,18 +26,26 @@ class DatasetMenu(QMenu):
         set_transforms = QAction("Ustaw transformacje", self)
         set_transforms.triggered.connect(lambda: self.__set_transforms())
 
+        show_sample = QAction("Pokaż przykład ze zbioru", self)
+        show_sample.triggered.connect(lambda: self.__show_sample())
+
         clear_dataset = QAction("Wyczyść załadowany zbiór", self)
         clear_dataset.triggered.connect(lambda: self.__clear_dataset())
 
-        show_sample = QAction("Pokaż przykład ze zbioru", self)
-        show_sample.triggered.connect(lambda: self.__show_sample())
+        clear_cache = QAction("Usuń pobrane zbiory danych", self)
+        clear_cache.triggered.connect(lambda: self.__clear_cache())
 
         self.addAction(load_dataset)
         self.addAction(set_transforms)
         self.addAction(show_sample)
         self.addAction(clear_dataset)
+        self.addAction(clear_cache)
 
     def __load_dataset(self):
+        if self.parent.train_loader is not None:
+            show_alert("Ostrzeżenie!", "Zbiór danych został już załadowany!\nNie można załadować po raz kolejny!", QMessageBox.Warning)
+            return
+
         dialog = LoadDatasetDialog()
         dialog.exec_()
 
@@ -60,6 +73,9 @@ class DatasetMenu(QMenu):
 
     def __on_data_loaded(self, data):
         train_loader, val_loader, test_loader = data
+        self.parent.train_loader = train_loader
+        self.parent.val_loader = val_loader
+        self.parent.test_loader = test_loader
 
     def __on_dialog_close(self, event):
         if self.__loader_thread.isRunning():
@@ -89,14 +105,52 @@ class DatasetMenu(QMenu):
         layout.addWidget(QLabel("Może to zająć od kilku do kilkunastu minut", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__loader_dialog.setLayout(layout)
-        self.__loader_dialog.move(int((screen_geometry.width() - self.width()) / 2), int((screen_geometry.height() - self.height()) / 2 - 100))
+        self.__loader_dialog.move(int((self.screen_geometry.width() - self.width()) / 2), int((self.screen_geometry.height() - self.height()) / 2 - 100))
 
     def __set_transforms(self):
+        if self.parent.train_loader is not None:
+            show_alert("Ostrzeżenie!", "Zbiór danych jest załadowany!\nNie można zmieniać w tym momencie transformacji!", QMessageBox.Warning)
+            return
+        
         dialog = SetTransformsDialog()
         dialog.exec_()
 
     def __clear_dataset(self):
-        pass
+        if self.parent.train_loader is None:
+            show_alert("Wiadomość!", "Żaden zbiór nie jest załadowany.", QMessageBox.Information)
+            return
+        
+        self.parent.train_loader = None
+        self.parent.val_loader = None
+        self.parent.test_loader = None
+        show_alert("Wiadomość!", "Załadowany zbiór został wyczyszczony.", QMessageBox.Information)
+
+    def __clear_cache(self):
+        q = QMessageBox(self)
+        q.setGeometry(0, 0, 300, 200)
+        q.setWindowTitle('Pytanie')
+        q.setText('Czy na pewno chcesz usunąć pobrane zbiory danych?')
+        q.setStandardButtons(QMessageBox.NoButton)
+        q.addButton('Tak', QMessageBox.YesRole)
+        q.addButton('Nie', QMessageBox.NoRole)
+        q.move(int((self.screen_geometry.width() - self.width()) / 2), int((self.screen_geometry.height() - self.height()) / 2))
+
+        q.exec_()
+
+        if q.clickedButton() and q.clickedButton().text() == 'Tak':
+            cleared = clear_cache_directory()
+            if cleared:
+                show_alert("Sukces!", "Zbiory danych został usunięte.", QMessageBox.Information)
+            else:
+                show_alert("Błąd!", f"Nie udało się usunąć zbiorów!.", QMessageBox.Warning)
+        else:
+            return
 
     def __show_sample(self):
-        pass
+        if self.parent.train_loader is None:
+            show_alert("Ostrzeżenie!", "Zbiór danych nie jest załadowany!\nNie można wykonać tej operacji bez załadowanego zbioru!", QMessageBox.Warning)
+            return
+        
+        rand = random.randint(0, len(self.parent.train_loader))
+
+        display_example(self.parent.train_loader.dataset, rand)

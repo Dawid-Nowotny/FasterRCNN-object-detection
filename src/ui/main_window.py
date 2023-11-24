@@ -15,6 +15,11 @@ from .styles import MENU_STYLE
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.train_loader = None
+        self.val_loader = None
+        self.test_loader = None
+        self.model = None
+
         self.__set_geometry()
         self.__init_GUI()
         self.__init_menubar()

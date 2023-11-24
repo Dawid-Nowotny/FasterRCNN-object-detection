@@ -26,8 +26,17 @@ def display_example(dataset, idx):
         label = obj['name']
         color = label_colors.get(label, (0, 0, 0))
         
-        cv2.rectangle(image_bgr, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.putText(image_bgr, label, (xmin, ymin - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        text_width, text_height = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)[0]
+        
+        if ymin - 5 - text_height < 0:
+            cv2.rectangle(image_bgr, (xmin, ymin), (xmax, ymax), color, 2)
+            cv2.putText(image_bgr, label, (xmin, ymax + 5 + text_height), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        elif ymax + 5 + text_height > image_bgr.shape[0]:
+            cv2.rectangle(image_bgr, (xmin, ymin), (xmax, ymax), color, 2)
+            cv2.putText(image_bgr, label, (xmin, ymin - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        else:
+            cv2.rectangle(image_bgr, (xmin, ymin), (xmax, ymax), color, 2)
+            cv2.putText(image_bgr, label, (xmin, ymin - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
     
     image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
     

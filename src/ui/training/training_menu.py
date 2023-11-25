@@ -5,6 +5,7 @@ from PyQt5 import QtCore
 from src.ui.show_alert import show_alert
 
 from .optim_params_dialog import SetOptimDialog
+from .scheduler_params_dialog import SetSchedulerDialog
 
 class TrainingMenu(QMenu):
     def __init__(self, parent=None):
@@ -17,7 +18,7 @@ class TrainingMenu(QMenu):
         set_optim_params = QAction("Ustal parametry SGD", self)
         set_optim_params.triggered.connect(lambda: self.__set_optim_params())
 
-        set_scheduler_params = QAction("Ustal parametry planisty", self)
+        set_scheduler_params = QAction("Ustal parametry STEPLR", self)
         set_scheduler_params.triggered.connect(lambda: self.__set_scheduler_params())
 
         self.addAction(train_model)
@@ -32,4 +33,5 @@ class TrainingMenu(QMenu):
         dialog.exec_()
 
     def __set_scheduler_params(self):
-        pass
+        dialog = SetSchedulerDialog()
+        dialog.exec_()

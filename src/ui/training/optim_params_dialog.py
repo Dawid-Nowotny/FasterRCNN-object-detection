@@ -9,10 +9,10 @@ class SetOptimDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw transformacje")
+        self.setWindowTitle("Ustaw parametry SGD")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
-        self.setFixedWidth(150)
+        self.setFixedWidth(200)
 
         self.__conf_button = QPushButton("OK")
         self.__conf_button.clicked.connect(lambda: self.__confirm())

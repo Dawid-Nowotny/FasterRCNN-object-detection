@@ -51,4 +51,8 @@ class DataShelter:
             cls._instance.nesterov  = False
             cls._instance.maximize = False
 
+            #STEPLR
+            cls._instance.step_size = 5
+            cls._instance.gamma = 0.1
+
         return cls._instance

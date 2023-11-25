@@ -6,7 +6,7 @@ from src.ui.show_alert import show_alert
 
 class TrainingMenu(QMenu):
     def __init__(self, parent=None):
-        super().__init__("Model", parent)
+        super().__init__("Trening", parent)
         self.parent = parent
 
         train_model = QAction("Trenuj model", self)

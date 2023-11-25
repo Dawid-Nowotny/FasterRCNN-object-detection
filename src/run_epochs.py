@@ -30,8 +30,8 @@ def run_epochs(model, train_loader, val_loader, test_loader, num_epochs=10, lear
 
         lr_scheduler.step()
 
-        accuracy = test_model(model, test_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
-        val_accuracy = test_model(model, val_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
+        accuracy, test_mAP = test_model(model, test_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
+        val_accuracy, val_mAP = test_model(model, val_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
 
         accuracy_list.append(accuracy)
         val_accuracy_list.append(val_accuracy)
@@ -41,6 +41,8 @@ def run_epochs(model, train_loader, val_loader, test_loader, num_epochs=10, lear
         print(f"Loss: {loss}")
         print(f"Test Accuracy: {accuracy}")
         print(f"Validation Accuracy: {val_accuracy}")
+        print(f"Test mAP: {test_mAP}")
+        print(f"Validation mAP : {val_mAP}")
 
     save_model(model)
     plot_losses(losses_list, val_losses_list)

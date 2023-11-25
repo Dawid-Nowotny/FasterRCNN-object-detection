@@ -9,6 +9,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from .file_menubar import FileMenubar
 from src.ui.dataset.dataset_menu import DatasetMenu
 from src.ui.model.model_menu import ModelMenu
+from src.ui.training.training_menu import TrainingMenu
 
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
 from .styles import MENU_STYLE
@@ -47,3 +48,4 @@ class MainWindow(QMainWindow):
 
         menubar.addMenu(DatasetMenu(self))
         menubar.addMenu(ModelMenu(self))
+        menubar.addMenu(TrainingMenu(self))

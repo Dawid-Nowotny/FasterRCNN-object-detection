@@ -39,4 +39,16 @@ class DataShelter:
             cls._instance.chosen_year_text = 2008
             cls._instance.batch_size = 4
 
+
+            #SGD
+            cls._instance.lr = 0.001
+
+            cls._instance.momentum = 0.0
+            cls._instance.weight_decay = 0.0
+
+            cls._instance.dampening = 0.0
+
+            cls._instance.nesterov  = False
+            cls._instance.maximize = False
+
         return cls._instance

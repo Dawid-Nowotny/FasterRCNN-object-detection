@@ -110,10 +110,6 @@ class DatasetMenu(QMenu):
         self.__loader_dialog.move(int((self.screen_geometry.width() - self.width()) / 2), int((self.screen_geometry.height() - self.height()) / 2 - 100))
 
     def __set_transforms(self):
-        if self.parent.train_loader is not None:
-            show_alert("Ostrzeżenie!", "Zbiór danych jest załadowany!\nNie można zmieniać w tym momencie transformacji!", QMessageBox.Warning)
-            return
-        
         dialog = SetTransformsDialog()
         dialog.exec_()
 

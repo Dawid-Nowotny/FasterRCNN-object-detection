@@ -55,4 +55,9 @@ class DataShelter:
             cls._instance.step_size = 5
             cls._instance.gamma = 0.1
 
+            #Training
+            cls._instance.epochs = 5
+            cls._instance.iou_threshold = 0.6
+            cls._instance.use_CUDA = True
+
         return cls._instance

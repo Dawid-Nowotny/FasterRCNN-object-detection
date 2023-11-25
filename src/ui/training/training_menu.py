@@ -4,6 +4,7 @@ from PyQt5 import QtCore
 
 from src.ui.show_alert import show_alert
 
+from .training_params_dialog import SetTrainingDialog
 from .optim_params_dialog import SetOptimDialog
 from .scheduler_params_dialog import SetSchedulerDialog
 
@@ -26,7 +27,17 @@ class TrainingMenu(QMenu):
         self.addAction(set_scheduler_params)
 
     def __run_training(self):
-        pass
+        if self.parent.model is None:
+            show_alert("Ostrzeżenie!", "Nie można rozpocząć treningu bez stworzonego modelu.", QMessageBox.Warning)
+            return
+        
+        dialog = SetTrainingDialog()
+        dialog.exec_()
+
+        if not dialog.finished:
+            return
+        
+        dialog.finished = False
 
     def __set_optim_params(self):
         dialog = SetOptimDialog()

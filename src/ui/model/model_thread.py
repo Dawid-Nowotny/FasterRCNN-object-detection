@@ -15,6 +15,5 @@ class ModelLoaderThread(QThread):
 
         if model is None:
             self.model_loaded.emit(None)
-
         else:
             self.model_loaded.emit(model)

@@ -16,6 +16,8 @@ from .data_shelter import DataShelter
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
 from .styles import MENU_STYLE
 
+from src.config import EVALUATION_DATA
+
 from src.image_detection.load_image import load_image
 from src.video_detection.load_video import load_video
 
@@ -98,7 +100,8 @@ class MainWindow(QMainWindow):
         file_dialog = QFileDialog()
 
         if type == "img":
-            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz obraz", "", "Image Files (*.png *.jpg)", options=options)
+            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz obraz", EVALUATION_DATA, "Image Files (*.png *.jpg)", options=options)
+
             if file_path:
                 try:
                     image = load_image(file_path)
@@ -109,12 +112,20 @@ class MainWindow(QMainWindow):
 
                     print(image)
 
+                    detections = image_detect_objects(self.model, image, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
+                    
+                    if not detections:
+                        show_alert("Ostrzeżenie!", "Nie rozpoznano żadnego obiektu na zdjęciu.", QMessageBox.Warning)
+                        return
+                    
+                    visualize_detections(image, detections)
 
                 except:
                     show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)
 
         elif type == "vid":
-            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", "", "Video Files (*.mp4)", options=options)
+            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", EVALUATION_DATA, "Video Files (*.mp4)", options=options)
+
             if file_path:
                 try:
                     video = load_video(file_path)
@@ -124,6 +135,7 @@ class MainWindow(QMainWindow):
                         return
                     
                     print(video)
+                    process_video(self.model, video, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
 
                 except:
                     show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)

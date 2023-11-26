@@ -60,4 +60,9 @@ class DataShelter:
             cls._instance.iou_threshold = 0.6
             cls._instance.use_CUDA = True
 
+            #Detection
+            cls._instance.score_threshold_detect = 0.4
+            cls._instance.iou_threshold_detect = 0.6
+            cls._instance.use_CUDA_detect = True
+
         return cls._instance

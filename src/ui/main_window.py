@@ -10,12 +10,18 @@ from src.ui.dataset.dataset_menu import DatasetMenu
 from src.ui.model.model_menu import ModelMenu
 from src.ui.training.training_menu import TrainingMenu
 
+from .detection_dialog import SetDetectionDialog
 from .show_alert import show_alert
+from .data_shelter import DataShelter
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
 from .styles import MENU_STYLE
 
 from src.image_detection.load_image import load_image
 from src.video_detection.load_video import load_video
+
+from src.image_detection.image_detect_objects import image_detect_objects
+from src.image_detection.visualize_detections import visualize_detections
+from src.video_detection.process_video import process_video
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -77,6 +83,16 @@ class MainWindow(QMainWindow):
         if self.model is None:
             show_alert("Wiadomość!", "Model nie jest załadowany.\nNie można rozpoznać obiektów.", QMessageBox.Information)
             return
+        
+        dialog = SetDetectionDialog()
+        dialog.exec_()
+
+        if not dialog.finished:
+            return
+        
+        dialog.finished = False
+        dialog.lower()
+        data_shelter = DataShelter()
 
         options = QFileDialog.Options()
         file_dialog = QFileDialog()
@@ -93,8 +109,9 @@ class MainWindow(QMainWindow):
 
                     print(image)
 
-                except Exception as e:
-                    print(f"Error loading image: {str(e)}")
+
+                except:
+                    show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)
 
         elif type == "vid":
             file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", "", "Video Files (*.mp4)", options=options)
@@ -103,10 +120,10 @@ class MainWindow(QMainWindow):
                     video = load_video(file_path)
 
                     if video is None:
-                        show_alert("Ostrzeżenie!", "Błąd podczas ładowania zdjęcia.", QMessageBox.Warning)
+                        show_alert("Ostrzeżenie!", "Błąd podczas ładowania wideo.", QMessageBox.Warning)
                         return
                     
                     print(video)
 
-                except Exception as e:
-                    print(f"Error loading video: {str(e)}")
+                except:
+                    show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)

@@ -89,8 +89,8 @@ class ModelMenu(QMenu):
             model = load_model(dialog.option, file_name)
 
             if model is None:
-                show_alert("Ostrzeżenie!", "Błąd podczas ładowaniu modelu, upewnij się, że:\
-                            \n- ładujesz model Faster R-CNN z odpowiednim backbon'em \
+                show_alert("Ostrzeżenie!", "Błąd podczas ładowania modelu, upewnij się, że:\
+                            \n- ładujesz model Faster R-CNN z odpowiednim backbonem \
                             \n- jest on wytrenowany.", QMessageBox.Warning)
                 return
 

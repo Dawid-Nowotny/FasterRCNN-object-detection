@@ -6,5 +6,5 @@ def load_video(video_path):
         if not video.isOpened():
             raise Exception(f"Unable to open video file: {video_path}")
         return video
-    except Exception as e:
-        raise Exception(f"Error while loading video: {str(e)}")
+    except:
+        return None

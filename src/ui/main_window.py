@@ -1,6 +1,5 @@
-import sys
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QWidget
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QGridLayout, QWidget, QFileDialog
 from PyQt5.QtCore import QSize    
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
 from PyQt5.QtGui import QPixmap
@@ -11,8 +10,12 @@ from src.ui.dataset.dataset_menu import DatasetMenu
 from src.ui.model.model_menu import ModelMenu
 from src.ui.training.training_menu import TrainingMenu
 
+from .show_alert import show_alert
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
 from .styles import MENU_STYLE
+
+from src.image_detection.load_image import load_image
+from src.video_detection.load_video import load_video
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -29,8 +32,9 @@ class MainWindow(QMainWindow):
         self.val_mAP = None
 
         self.__set_geometry()
-        self.__init_GUI()
         self.__init_menubar()
+        self.__init_GUI()
+        self.__set_layout()
         
     def __set_geometry(self):
         self.showNormal()
@@ -42,10 +46,7 @@ class MainWindow(QMainWindow):
         self.__window_y = int((screen_size.height() - WINDOW_HEIGHT) / 2)
 
         self.setGeometry(self.__window_x, self.__window_y, WINDOW_WIDTH, WINDOW_HEIGHT)
-
-    def __init_GUI(self):
-        pass
-
+    
     def __init_menubar(self):
         menubar = FileMenubar()
 
@@ -55,3 +56,57 @@ class MainWindow(QMainWindow):
         menubar.addMenu(DatasetMenu(self))
         menubar.addMenu(ModelMenu(self))
         menubar.addMenu(TrainingMenu(self))
+
+    def __init_GUI(self):
+        self.__img_button = QPushButton("Rozpoznaj obiekty za zdjęciu", self)
+        self.__vid_button = QPushButton("Rozpoznaj obiekty za wideo", self)
+
+        self.__img_button.clicked.connect(lambda: self.__open_file_for_detection("img"))
+        self.__vid_button.clicked.connect(lambda: self.__open_file_for_detection("vid"))
+
+    def __set_layout(self):
+        central_widget = QWidget()
+        layout = QVBoxLayout(central_widget)
+
+        layout.addWidget(self.__img_button)
+        layout.addWidget(self.__vid_button)
+
+        self.setCentralWidget(central_widget)
+
+    def __open_file_for_detection(self, type):
+        if self.model is None:
+            show_alert("Wiadomość!", "Model nie jest załadowany.\nNie można rozpoznać obiektów.", QMessageBox.Information)
+            return
+
+        options = QFileDialog.Options()
+        file_dialog = QFileDialog()
+
+        if type == "img":
+            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz obraz", "", "Image Files (*.png *.jpg)", options=options)
+            if file_path:
+                try:
+                    image = load_image(file_path)
+
+                    if image is None:
+                        show_alert("Ostrzeżenie!", "Błąd podczas ładowania zdjęcia.", QMessageBox.Warning)
+                        return
+
+                    print(image)
+
+                except Exception as e:
+                    print(f"Error loading image: {str(e)}")
+
+        elif type == "vid":
+            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", "", "Video Files (*.mp4)", options=options)
+            if file_path:
+                try:
+                    video = load_video(file_path)
+
+                    if video is None:
+                        show_alert("Ostrzeżenie!", "Błąd podczas ładowania zdjęcia.", QMessageBox.Warning)
+                        return
+                    
+                    print(video)
+
+                except Exception as e:
+                    print(f"Error loading video: {str(e)}")

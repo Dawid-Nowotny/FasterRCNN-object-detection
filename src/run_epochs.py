@@ -6,15 +6,17 @@ from .train import train
 from .validate_model import validate_model
 from .test_model import test_model
 
-from models.save_model import save_model
+def run_epochs(
+        model, train_loader, val_loader, test_loader,
+        num_epochs, learning_rate, momentum, weight_decay, 
+        dampening, nesterov, maximize,
+        step_size, gamma, iou_threshold, use_cuda
+        ):
 
-from utils.plot_utils import plot_losses, plot_accuracies
-
-def run_epochs(model, train_loader, val_loader, test_loader, num_epochs=10, learning_rate=0.001, iou_threshold=0.6, use_cuda=True):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
     model.to(device)
-    optimizer = SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-    lr_scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
+    optimizer = SGD(model.parameters(), lr=learning_rate, momentum=momentum, dampening=dampening, weight_decay=weight_decay, nesterov=nesterov, maximize=maximize)
+    lr_scheduler = StepLR(optimizer, step_size=step_size, gamma=gamma)
 
     losses_list = []
     val_losses_list = []
@@ -44,6 +46,4 @@ def run_epochs(model, train_loader, val_loader, test_loader, num_epochs=10, lear
         print(f"Test mAP: {test_mAP}")
         print(f"Validation mAP : {val_mAP}")
 
-    save_model(model)
-    plot_losses(losses_list, val_losses_list)
-    plot_accuracies(accuracy_list, val_accuracy_list)
+    return model, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP

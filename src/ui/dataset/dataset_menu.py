@@ -58,8 +58,13 @@ class DatasetMenu(QMenu):
 
         dialog.lower()
         data_shelter = DataShelter()
-        transform = create_transforms()
-        
+        transform = create_transforms(data_shelter.resize, data_shelter.resize1, data_shelter.resize2,
+                                      data_shelter.horizontal_flip, data_shelter.vertical_flip, 
+                                      data_shelter.color_jitter, data_shelter.brightness, data_shelter.contrast, data_shelter.saturation, data_shelter.hue, 
+                                      data_shelter.random_rotation, data_shelter.angle, data_shelter.normalize,
+                                      data_shelter.mean1, data_shelter.mean2, data_shelter.mean3, 
+                                      data_shelter.std1, data_shelter.std2, data_shelter.std3
+                                      )
         self.__init_loader_dialog()
 
         self.__loader_thread = DataLoaderThread(data_shelter.chosen_year_text, data_shelter.batch_size, transform)
@@ -87,7 +92,6 @@ class DatasetMenu(QMenu):
             event.accept()
 
     def __init_loader_dialog(self):
-        screen_geometry = QApplication.desktop().screenGeometry()
         self.__loader_dialog = QDialog(self)
         self.__loader_dialog.setModal(True)
         self.__loader_dialog.setWindowTitle("Ładowanie zbioru danych")
@@ -102,9 +106,9 @@ class DatasetMenu(QMenu):
         movie.start()
 
         layout = QVBoxLayout(self.__loader_dialog)
-        layout.addWidget(QLabel("Trwa ładowanie", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel("Trwa ładowanie...", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
-        layout.addWidget(QLabel("Może to zająć od kilku do kilkunastu minut", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel("Może to zająć od kilku do kilkunastu minut.", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__loader_dialog.setLayout(layout)
         self.__loader_dialog.move(int((self.screen_geometry.width() - self.width()) / 2), int((self.screen_geometry.height() - self.height()) / 2 - 100))

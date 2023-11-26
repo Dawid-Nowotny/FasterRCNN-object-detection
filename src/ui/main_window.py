@@ -21,6 +21,12 @@ class MainWindow(QMainWindow):
         self.val_loader = None
         self.test_loader = None
         self.model = None
+        self.losses_list = None 
+        self.val_losses_list = None
+        self.accuracy_list = None
+        self.val_accuracy_list = None
+        self.test_mAP = None
+        self.val_mAP = None
 
         self.__set_geometry()
         self.__init_GUI()

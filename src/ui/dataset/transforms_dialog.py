@@ -9,6 +9,7 @@ from src.ui.data_shelter import DataShelter
 class SetTransformsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.finished = False
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
         self.setWindowTitle("Ustaw transformacje")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
@@ -180,4 +181,5 @@ class SetTransformsDialog(QDialog):
             show_alert("Błąd!", f"Error: {str(e)}\nNie udało się wykonac operacji", QMessageBox.Critical)
             self.close()
 
+        self.finished = True
         self.close()

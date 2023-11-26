@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout, QDesktopWidget
+from PyQt5.QtWidgets import QMenu, QAction, QMessageBox, QDialog, QLabel, QApplication, QVBoxLayout
 from PyQt5.QtGui import QMovie
 from PyQt5 import QtCore
 

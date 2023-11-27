@@ -157,7 +157,6 @@ class DatasetMenu(QMenu):
         rand = random.randint(0, len(self.parent.train_loader))
 
         image = get_dataset_sample(self.parent.train_loader.dataset, rand)
-
-        cv2.imshow('Sample', image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        self.parent.image = image
+        self.parent.interface_state = "display_image"
+        self.parent.update_interface()

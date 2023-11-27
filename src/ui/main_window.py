@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QWidget, QFileDialog
-from PyQt5.QtCore import QSize    
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QWidget, QFileDialog, QSizePolicy, QGraphicsScene, QLabel, QGraphicsView
+from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt5.QtGui import QPixmap, QMovie
+from PyQt5.QtGui import QPixmap, QMovie, QPixmap, QImage
 from PyQt5 import QtCore, QtWidgets, QtGui
 import cv2
 
@@ -29,6 +29,8 @@ from src.utils.get_screen_resolution import get_screen_resolution
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.interface_state = "initial"
+
         self.train_loader = None
         self.val_loader = None
         self.test_loader = None
@@ -76,14 +78,92 @@ class MainWindow(QMainWindow):
         self.__img_button.clicked.connect(lambda: self.__open_file_for_detection("img"))
         self.__vid_button.clicked.connect(lambda: self.__open_file_for_detection("vid"))
 
-    def __set_layout(self):
-        central_widget = QWidget()
-        layout = QVBoxLayout(central_widget)
+        self.__clear_display_btn = QPushButton("Wyczyść wyświetlany zdjęcie/film", self)
+        self.__clear_display_btn.clicked.connect(lambda: self.__clear_display())
 
-        layout.addWidget(self.__img_button)
-        layout.addWidget(self.__vid_button)
+        self.__show_training_results = QPushButton("Pokaż wyniki treningu", self)
+        self.__show_training_results.clicked.connect(lambda: print("todo"))
+
+        self.__image_label = QLabel(self)
+        self.__image_label.setAlignment(QtCore.Qt.AlignLeft)
+
+        self.__video_scene = QGraphicsScene()
+        self.__video_view = QGraphicsView(self)
+        self.__video_view.setScene(self.__video_scene)
+        self.__video_view.setAlignment(QtCore.Qt.AlignCenter)
+
+    def __set_layout(self):
+        self.__img_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__vid_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        central_widget = QWidget()
+        vbox = QVBoxLayout()
+        hbox = QHBoxLayout(central_widget)
+        secRow_vbox = QVBoxLayout()
+
+        vbox.addWidget(self.__img_button)
+        vbox.addWidget(self.__vid_button)
+
+        vbox.addWidget(self.__image_label)
+        vbox.addWidget(self.__video_view)
+        self.__image_label.hide()
+        self.__video_view.hide()
+        
+        secRow_vbox.addWidget(self.__clear_display_btn)
+        secRow_vbox.addWidget(self.__show_training_results)
+
+        hbox.addLayout(vbox)
+        hbox.addLayout(secRow_vbox)
 
         self.setCentralWidget(central_widget)
+
+    def update_interface(self):
+        if self.interface_state == "display_image":
+            height, width, _ = self.image.shape
+            bytes_per_line = 3 * width
+
+            self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+            qt_image = QImage(self.image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+            pixmap = QPixmap.fromImage(qt_image)
+            self.__image_label.setPixmap(pixmap)
+            self.__image_label.setScaledContents(True)
+
+            self.__image_label.show()
+            self.__video_view.hide()
+            self.__img_button.hide()
+            self.__vid_button.hide()
+
+        elif self.interface_state == "display_video":
+            height, width, _ = self.frames[0].shape
+            bytes_per_line = 3 * width
+
+            self.frame_index = 0
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.display_next_frame)
+            self.timer.start(33)
+
+            pixmap = QPixmap.fromImage(QImage(self.frames[0].data, width, height, bytes_per_line, QImage.Format_RGB888))
+            self.__video_scene.addPixmap(pixmap)
+            self.__video_view.setScene(self.__video_scene)
+
+            self.__video_view.show()
+            self.__image_label.hide()
+            self.__img_button.hide()
+            self.__vid_button.hide()
+
+    def display_next_frame(self):
+        if self.frames and self.frame_index < len(self.frames):
+            height, width, _ = self.frames[self.frame_index].shape
+            bytes_per_line = 3 * width
+
+            pixmap = QPixmap.fromImage(QImage(self.frames[self.frame_index].data, width, height, bytes_per_line, QImage.Format_RGB888))
+            self.__video_scene.clear()
+            self.__video_scene.addPixmap(pixmap)
+            self.__video_view.setScene(self.__video_scene)
+            self.frame_index += 1
+        else:
+            self.timer.stop()
 
     def __open_file_for_detection(self, type):
         if self.model is None:
@@ -126,10 +206,8 @@ class MainWindow(QMainWindow):
                 self.__detection_dialog.exec_()
 
                 if self.image is not None:
-                    cv2.imshow('Detected Objects', self.image)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
-                    self.image = None
+                    self.interface_state = "display_image"
+                    self.update_interface()
 
         elif type == "vid":
             file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", EVALUATION_DATA, "Video Files (*.mp4)", options=options)
@@ -155,19 +233,9 @@ class MainWindow(QMainWindow):
                 self.__detection_dialog.exec_()
 
                 if self.frames is not None:
-                    cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
-                    cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
-                    screen_width, screen_height = get_screen_resolution()
-                    cv2.resizeWindow('Video', screen_width, screen_height)
-
-                    for frame in self.frames:
-                        cv2.imshow('Video', frame)
-                        if cv2.waitKey(1) & 0xFF == ord('q'):
-                            break
-
-                    cv2.destroyAllWindows()
-                    self.frames = None
-
+                    self.interface_state = "display_video"
+                    self.frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) for frame in self.frames]
+                    self.update_interface()
 
     def __on_image_object_detected(self, data):
         self.image = data
@@ -220,3 +288,14 @@ class MainWindow(QMainWindow):
         layout.addWidget(QLabel("Może to zająć do kilku do kilkunastu minut", self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__detection_dialog.setLayout(layout)
+
+    def __clear_display(self):
+        self.interface_state = "initial"
+
+        self.__image_label.hide()
+        self.__video_view.hide()
+        self.__img_button.show()
+        self.__vid_button.show()
+
+        self.image = None
+        self.frames = None

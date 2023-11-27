@@ -109,7 +109,7 @@ class ModelMenu(QMenu):
     def __on_dialog_close(self, event):
         if self.__loader_thread.isRunning():
             self.__loader_thread.terminate()
-            show_alert("Przerwano!", "Ładowanie zbioru danych zostało przerwane!", QMessageBox.Warning, self.__loader_dialog)
+            show_alert("Przerwano!", "Ładowanie modelu zostało przerwane!", QMessageBox.Warning, self.__loader_dialog)
             self.__loader_dialog.lower()
             event.accept()
 

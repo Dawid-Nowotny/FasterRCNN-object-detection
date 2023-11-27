@@ -10,7 +10,7 @@ class SetTrainingDialog(QDialog):
         super().__init__(parent)
         self.finished = False
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw parametry STEPLR")
+        self.setWindowTitle("Ustaw parametry detekcji")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setFixedWidth(200)

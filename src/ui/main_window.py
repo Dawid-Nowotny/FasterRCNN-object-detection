@@ -24,8 +24,6 @@ from src.config import EVALUATION_DATA
 from src.image_detection.load_image import load_image
 from src.video_detection.load_video import load_video
 
-from src.utils.get_screen_resolution import get_screen_resolution
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -52,7 +50,7 @@ class MainWindow(QMainWindow):
         
     def __set_geometry(self):
         self.showNormal()
-        self.setWindowTitle("Future app name")
+        self.setWindowTitle("Faster R-CNN object detector")
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
 
         screen_size = QApplication.primaryScreen().size()
@@ -268,7 +266,6 @@ class MainWindow(QMainWindow):
             event.accept()
 
     def __init_detection_dialog(self, function):
-        screen_geometry = QApplication.desktop().screenGeometry()
         self.__detection_dialog = QDialog(self)
         self.__detection_dialog.setModal(True)
         self.__detection_dialog.setWindowTitle("Detekcja obiektów")

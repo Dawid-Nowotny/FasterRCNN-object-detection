@@ -4,6 +4,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
 from PyQt5.QtGui import QPixmap
 from PyQt5 import QtCore, QtWidgets, QtGui
+import cv2
 
 from .file_menubar import FileMenubar
 from src.ui.dataset.dataset_menu import DatasetMenu
@@ -24,6 +25,7 @@ from src.video_detection.load_video import load_video
 from src.image_detection.image_detect_objects import image_detect_objects
 from src.image_detection.visualize_detections import visualize_detections
 from src.video_detection.process_video import process_video
+from src.utils.get_screen_resolution import get_screen_resolution
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -135,7 +137,22 @@ class MainWindow(QMainWindow):
                         return
                     
                     print(video)
-                    process_video(self.model, video, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
+                    frames, object_detected = process_video(self.model, video, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
+
+                    if object_detected:
+                        cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
+                        cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+                        screen_width, screen_height = get_screen_resolution()
+                        cv2.resizeWindow('Video', screen_width, screen_height)
+
+                        for frame in frames:
+                            cv2.imshow('Video', frame)
+                            if cv2.waitKey(1) & 0xFF == ord('q'):
+                                break
+
+                        cv2.destroyAllWindows()
+                    else:
+                        show_alert("Ostrzeżenie!", "Nie rozpoznano żadnego obiektu na filmie.", QMessageBox.Warning)
 
                 except:
                     show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)

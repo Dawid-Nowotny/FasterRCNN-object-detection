@@ -131,7 +131,7 @@ class ModelMenu(QMenu):
         layout = QVBoxLayout(self.__loader_dialog)
         layout.addWidget(QLabel("Trwa ładowanie...", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
-        layout.addWidget(QLabel("Może to zająć od kilku do kilkunastu minut.", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel("Może to zająć do kilku minut.", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__loader_dialog.setLayout(layout)
         self.__loader_dialog.move(int((screen_geometry.width() - self.width()) / 2), int((screen_geometry.height() - self.height()) / 2 ) - 100)

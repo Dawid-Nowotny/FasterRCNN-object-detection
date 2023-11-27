@@ -5,23 +5,18 @@ from src.label_colors import label_colors
 from src.image_detection.image_detect_objects import image_detect_objects
 
 def process_video(model, video, iou_threshold=0.5, score_threshold=0.6, use_cuda=True):
-    cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
-    screen_width, screen_height = get_screen_resolution()
-    cv2.resizeWindow('Video', screen_width, screen_height)
+    frames = []
+    object_detected = False
 
     while True:
         ret, frame = video.read()
         if not ret:
             break
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-        if cv2.getWindowProperty('Video', cv2.WND_PROP_VISIBLE) < 1:
-            break
-
         detections = image_detect_objects(model, frame, iou_threshold, score_threshold, use_cuda)
+
+        if detections:
+            object_detected = True
 
         for detection in detections:
             label = detection['label']
@@ -39,7 +34,7 @@ def process_video(model, video, iou_threshold=0.5, score_threshold=0.6, use_cuda
                 frame = cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
                 frame = cv2.putText(frame, f'{label} {score}', (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 5)
 
-        cv2.imshow('Video', frame)
+        frames.append(frame)
 
     video.release()
-    cv2.destroyAllWindows()
+    return frames, object_detected

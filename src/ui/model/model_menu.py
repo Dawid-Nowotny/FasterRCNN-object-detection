@@ -118,7 +118,7 @@ class ModelMenu(QMenu):
         self.__loader_dialog = QDialog(self)
         self.__loader_dialog.setModal(True)
         self.__loader_dialog.setWindowTitle("Ładowanie modelu")
-        self.__loader_dialog.setMinimumSize(200, 100)
+        self.__loader_dialog.setMinimumSize(250, 100)
         self.__loader_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.__loader_dialog.closeEvent = self.__on_dialog_close
 
@@ -134,7 +134,7 @@ class ModelMenu(QMenu):
         layout.addWidget(QLabel("Może to zająć do kilku minut.", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__loader_dialog.setLayout(layout)
-        self.__loader_dialog.move(int((screen_geometry.width() - self.width()) / 2), int((screen_geometry.height() - self.height()) / 2 ) - 100)
+        self.__loader_dialog.move(int((screen_geometry.width() - self.width()) / 2) - 50, int((screen_geometry.height() - self.height()) / 2 ) - 100)
 
     def __save_model(self):
         if self.parent.model is None:

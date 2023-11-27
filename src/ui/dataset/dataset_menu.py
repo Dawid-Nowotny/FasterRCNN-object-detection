@@ -3,6 +3,7 @@ from PyQt5.QtGui import QMovie
 from PyQt5 import QtCore
 
 import random
+import cv2
 
 from .transforms_dialog import SetTransformsDialog
 from .loading_dialog import LoadDatasetDialog
@@ -11,7 +12,7 @@ from .loader_thread import DataLoaderThread
 from src.ui.show_alert import show_alert
 
 from src.data_processing.transforms import create_transforms
-from src.utils.display_example import display_example
+from src.utils.get_dataset_sample import get_dataset_sample
 from src.utils.clear_cache_directory import clear_cache_directory
 
 class DatasetMenu(QMenu):
@@ -135,7 +136,7 @@ class DatasetMenu(QMenu):
         q.setStandardButtons(QMessageBox.NoButton)
         q.addButton('Tak', QMessageBox.YesRole)
         q.addButton('Nie', QMessageBox.NoRole)
-        q.move(int((self.screen_geometry.width() - self.width()) / 2), int((self.screen_geometry.height() - self.height()) / 2))
+        q.move(int((self.screen_geometry.width() - self.width()) / 2) - 75, int((self.screen_geometry.height() - self.height()) / 2) - 50)
 
         q.exec_()
 
@@ -155,4 +156,8 @@ class DatasetMenu(QMenu):
         
         rand = random.randint(0, len(self.parent.train_loader))
 
-        display_example(self.parent.train_loader.dataset, rand)
+        image = get_dataset_sample(self.parent.train_loader.dataset, rand)
+
+        cv2.imshow('Sample', image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()

@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QGridLayout, QWidget, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QWidget, QFileDialog
 from PyQt5.QtCore import QSize    
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QMovie
 from PyQt5 import QtCore, QtWidgets, QtGui
 import cv2
 
@@ -12,19 +12,18 @@ from src.ui.model.model_menu import ModelMenu
 from src.ui.training.training_menu import TrainingMenu
 
 from .detection_dialog import SetDetectionDialog
-from .show_alert import show_alert
 from .data_shelter import DataShelter
+from .image_detection_thread import ImageDetectionThread
+from .video_detection_thread import VideoDetectionThread
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
 from .styles import MENU_STYLE
+from .show_alert import show_alert
 
 from src.config import EVALUATION_DATA
 
 from src.image_detection.load_image import load_image
 from src.video_detection.load_video import load_video
 
-from src.image_detection.image_detect_objects import image_detect_objects
-from src.image_detection.visualize_detections import visualize_detections
-from src.video_detection.process_video import process_video
 from src.utils.get_screen_resolution import get_screen_resolution
 
 class MainWindow(QMainWindow):
@@ -40,6 +39,9 @@ class MainWindow(QMainWindow):
         self.val_accuracy_list = None
         self.test_mAP = None
         self.val_mAP = None
+
+        self.image = None
+        self.frames = None
 
         self.__set_geometry()
         self.__init_menubar()
@@ -112,18 +114,22 @@ class MainWindow(QMainWindow):
                         show_alert("Ostrzeżenie!", "Błąd podczas ładowania zdjęcia.", QMessageBox.Warning)
                         return
 
-                    print(image)
-
-                    detections = image_detect_objects(self.model, image, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
-                    
-                    if not detections:
-                        show_alert("Ostrzeżenie!", "Nie rozpoznano żadnego obiektu na zdjęciu.", QMessageBox.Warning)
-                        return
-                    
-                    visualize_detections(image, detections)
-
                 except:
                     show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)
+                    return
+
+                self.__init_detection_dialog(self.__on_dialog_close_image)
+                self.__image__detection_thread = ImageDetectionThread(self.model, image, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
+                self.__image__detection_thread.detection_finished.connect(self.__on_image_object_detected)
+                self.__image__detection_thread.start()
+
+                self.__detection_dialog.exec_()
+
+                if self.image is not None:
+                    cv2.imshow('Detected Objects', self.image)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
+                    self.image = None
 
         elif type == "vid":
             file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", EVALUATION_DATA, "Video Files (*.mp4)", options=options)
@@ -136,23 +142,81 @@ class MainWindow(QMainWindow):
                         show_alert("Ostrzeżenie!", "Błąd podczas ładowania wideo.", QMessageBox.Warning)
                         return
                     
-                    print(video)
-                    frames, object_detected = process_video(self.model, video, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
-
-                    if object_detected:
-                        cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
-                        cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
-                        screen_width, screen_height = get_screen_resolution()
-                        cv2.resizeWindow('Video', screen_width, screen_height)
-
-                        for frame in frames:
-                            cv2.imshow('Video', frame)
-                            if cv2.waitKey(1) & 0xFF == ord('q'):
-                                break
-
-                        cv2.destroyAllWindows()
-                    else:
-                        show_alert("Ostrzeżenie!", "Nie rozpoznano żadnego obiektu na filmie.", QMessageBox.Warning)
-
                 except:
                     show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)
+                    return
+                    
+                print(video)
+                self.__init_detection_dialog(self.__on_dialog_close_video)
+                self.__video__detection_thread = VideoDetectionThread(self.model, video, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
+                self.__video__detection_thread.detection_finished.connect(self.__on_video_object_detected)
+                self.__video__detection_thread.start()
+
+                self.__detection_dialog.exec_()
+
+                if self.frames is not None:
+                    cv2.namedWindow('Video', cv2.WINDOW_NORMAL)
+                    cv2.setWindowProperty('Video', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+                    screen_width, screen_height = get_screen_resolution()
+                    cv2.resizeWindow('Video', screen_width, screen_height)
+
+                    for frame in self.frames:
+                        cv2.imshow('Video', frame)
+                        if cv2.waitKey(1) & 0xFF == ord('q'):
+                            break
+
+                    cv2.destroyAllWindows()
+                    self.frames = None
+
+
+    def __on_image_object_detected(self, data):
+        self.image = data
+        self.__detection_dialog.close()
+
+        if self.image is None:
+            show_alert("Informacja!", "Nie rozpoznano żadnego obiektu na zdjęciu.", QMessageBox.Information)
+            return
+        
+    def __on_video_object_detected(self, data):
+        self.frames = data
+        self.__detection_dialog.close()
+
+        if self.frames is None:
+            show_alert("Informacja!", "Nie rozpoznano żadnego obiektu na całym wideo.", QMessageBox.Information)
+            return
+
+    def __on_dialog_close_image(self, event):
+        if self.__image__detection_thread.isRunning():
+            self.__image__detection_thread.terminate()
+            show_alert("Przerwano!", "Detekcja obiektów została przerwana!", QMessageBox.Warning, self.__detection_dialog)
+            self.__detection_dialog.lower()
+            event.accept()
+
+    def __on_dialog_close_video(self, event):
+        if self.__video__detection_thread.isRunning():
+            self.__video__detection_thread.terminate()
+            show_alert("Przerwano!", "Detekcja obiektów została przerwana!", QMessageBox.Warning, self.__detection_dialog)
+            self.__detection_dialog.lower()
+            event.accept()
+
+    def __init_detection_dialog(self, function):
+        screen_geometry = QApplication.desktop().screenGeometry()
+        self.__detection_dialog = QDialog(self)
+        self.__detection_dialog.setModal(True)
+        self.__detection_dialog.setWindowTitle("Detekcja obiektów")
+        self.__detection_dialog.setMinimumSize(200, 100)
+        self.__detection_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.__detection_dialog.closeEvent = function
+
+        gif_label = QLabel(self.__detection_dialog)
+        movie = QMovie("src\\ui\\resources\\spinner.gif")
+        movie.setScaledSize(QtCore.QSize(120, 120))
+        gif_label.setMovie(movie)
+        movie.start()
+
+        layout = QVBoxLayout(self.__detection_dialog)
+        layout.addWidget(QLabel("Trwa detekcja...", self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
+        layout.addWidget(QLabel("Może to zająć do kilku do kilkunastu minut", self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.setAlignment(QtCore.Qt.AlignCenter)
+        self.__detection_dialog.setLayout(layout)

@@ -5,7 +5,6 @@ from src.label_colors import label_colors
 
 def visualize_detections(image, detections):
     image_np = np.array(image)
-
     image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
 
     for detection in detections:
@@ -29,6 +28,4 @@ def visualize_detections(image, detections):
         
         cv2.putText(image_rgb, label_text, (text_x + 5, text_y + text_height + 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-    cv2.imshow('image', image_rgb)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    return image_rgb

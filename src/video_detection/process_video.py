@@ -1,6 +1,5 @@
 import cv2
 
-from src.utils.get_screen_resolution import get_screen_resolution
 from src.label_colors import label_colors
 from src.image_detection.image_detect_objects import image_detect_objects
 

@@ -15,6 +15,7 @@ from .detection_dialog import SetDetectionDialog
 from .data_shelter import DataShelter
 from .image_detection_thread import ImageDetectionThread
 from .video_detection_thread import VideoDetectionThread
+from .training_results_dialog import TrainingResultsDialog
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT
 from .styles import MENU_STYLE
 from .show_alert import show_alert
@@ -78,9 +79,11 @@ class MainWindow(QMainWindow):
 
         self.__clear_display_btn = QPushButton("Wyczyść wyświetlany zdjęcie/film", self)
         self.__clear_display_btn.clicked.connect(lambda: self.__clear_display())
+        self.__clear_display_btn.setEnabled(False)
 
-        self.__show_training_results = QPushButton("Pokaż wyniki treningu", self)
-        self.__show_training_results.clicked.connect(lambda: print("todo"))
+        self.show_training_results = QPushButton("Pokaż wyniki treningu", self)
+        self.show_training_results.clicked.connect(lambda: self.__show_training_results())
+        self.show_training_results.setEnabled(False)
 
         self.__image_label = QLabel(self)
         self.__image_label.setAlignment(QtCore.Qt.AlignLeft)
@@ -108,7 +111,7 @@ class MainWindow(QMainWindow):
         self.__video_view.hide()
         
         secRow_vbox.addWidget(self.__clear_display_btn)
-        secRow_vbox.addWidget(self.__show_training_results)
+        secRow_vbox.addWidget(self.show_training_results)
 
         hbox.addLayout(vbox)
         hbox.addLayout(secRow_vbox)
@@ -116,6 +119,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
 
     def update_interface(self):
+        self.__clear_display_btn.setEnabled(True)
+
         if self.interface_state == "display_image":
             height, width, _ = self.image.shape
             bytes_per_line = 3 * width
@@ -286,6 +291,11 @@ class MainWindow(QMainWindow):
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__detection_dialog.setLayout(layout)
 
+    def __show_training_results(self):
+        dialog = TrainingResultsDialog(self.losses_list, self.val_losses_list, self.accuracy_list, self.val_accuracy_list, 
+                                       self.test_mAP, self.val_mAP, self)
+        dialog.exec_()
+
     def __clear_display(self):
         self.interface_state = "initial"
 
@@ -296,3 +306,5 @@ class MainWindow(QMainWindow):
 
         self.image = None
         self.frames = None
+
+        self.__clear_display_btn.setEnabled(False)

@@ -68,13 +68,15 @@ class TrainingMenu(QMenu):
 
     def __on_model_trained(self, data):
         model, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP = data
-        self.model = model
-        self.losses_list = losses_list 
-        self.val_losses_list = val_losses_list
-        self.accuracy_list = accuracy_list
-        self.val_accuracy_list = val_accuracy_list
-        self.test_mAP = test_mAP
-        self.val_mAP = val_mAP
+        self.parent.model = model
+        self.parent.losses_list = losses_list 
+        self.parent.val_losses_list = val_losses_list
+        self.parent.accuracy_list = accuracy_list
+        self.parent.val_accuracy_list = val_accuracy_list
+        self.parent.test_mAP = test_mAP
+        self.parent.val_mAP = val_mAP
+
+        self.parent.show_training_results.setEnabled(True)
         
     def __on_dialog_close(self, event):
         if self.__training_thread.isRunning():

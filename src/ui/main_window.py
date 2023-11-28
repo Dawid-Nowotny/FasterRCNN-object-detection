@@ -87,6 +87,10 @@ class MainWindow(QMainWindow):
         self.__clear_display_btn.clicked.connect(lambda: self.__clear_display())
         self.__clear_display_btn.setEnabled(False)
 
+        self.__replay = QPushButton("Odtwórz ponownie film", self)
+        self.__replay.clicked.connect(lambda: self.update_interface())
+        self.__replay.setEnabled(False)
+
         self.show_training_results = QPushButton("Pokaż wyniki treningu", self)
         self.show_training_results.clicked.connect(lambda: self.__show_training_results())
         self.show_training_results.setEnabled(False)
@@ -120,6 +124,7 @@ class MainWindow(QMainWindow):
         self.__video_view.hide()
         
         secRow_vbox.addWidget(self.__clear_display_btn)
+        secRow_vbox.addWidget(self.__replay)
         secRow_vbox.addWidget(self.show_training_results)
         secRow_vbox.addStretch()
 
@@ -148,7 +153,7 @@ class MainWindow(QMainWindow):
             self.__vid_button.hide()
 
         elif self.interface_state == "display_video":
-            self.frames = [cv2.cvtColor(cv2.resize(frame, (1280, 720)), cv2.COLOR_BGR2RGB) for frame in self.frames]
+            self.__replay.setEnabled(False)
             height, width, _ = self.frames[0].shape
             bytes_per_line = 3 * width
 
@@ -185,6 +190,7 @@ class MainWindow(QMainWindow):
             self.frame_index += 1
         else:
             self.timer.stop()
+            self.__replay.setEnabled(True)
 
     def __open_file_for_detection(self, type):
         if self.model is None:
@@ -255,6 +261,7 @@ class MainWindow(QMainWindow):
 
                 if self.frames is not None:
                     self.interface_state = "display_video"
+                    self.frames = [cv2.cvtColor(cv2.resize(frame, (1280, 720)), cv2.COLOR_BGR2RGB) for frame in self.frames]
                     self.update_interface()
 
     def __on_image_object_detected(self, data):
@@ -328,3 +335,4 @@ class MainWindow(QMainWindow):
         self.frames = None
 
         self.__clear_display_btn.setEnabled(False)
+        self.__replay.setEnabled(False)

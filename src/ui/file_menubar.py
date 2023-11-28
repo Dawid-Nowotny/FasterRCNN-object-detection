@@ -13,11 +13,20 @@ class FileMenubar(QMenuBar):
         save_file = QAction("Zapisz aktualnie wyświetlany plik", self)
         save_file.triggered.connect(lambda: self.__save())
 
+        icon_info = QAction("Informacje o ikonach", self)
+        icon_info.triggered.connect(lambda: QMessageBox.information(self, "Źródło ikon", 
+        """
+        <a href="https://loading.io/icon/">icon 'spinner' from loading.io</a>
+        <br><a href="https://icons8.com/">Icons by icons8</a>
+        """))
+
         close_app = QAction("Zakończ", self)
         close_app.triggered.connect(lambda: QApplication.quit())
 
         file_menu.addAction(save_file)
-        self.addSeparator()
+        file_menu.addSeparator()
+        file_menu.addAction(icon_info)
+        file_menu.addSeparator()
         file_menu.addAction(close_app)
 
     def __save(self):

@@ -1,9 +1,8 @@
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QWidget, QFileDialog, QSizePolicy, QGraphicsScene, QLabel, QGraphicsView
-from PyQt5.QtCore import QSize, QTimer
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QWidget, QFileDialog, QSizePolicy, QGraphicsScene, QGraphicsView, QApplication, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap, QMovie, QPixmap, QImage, QIcon, QFont
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 import cv2
 import ctypes
 import time

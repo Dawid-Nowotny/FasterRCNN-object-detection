@@ -24,16 +24,16 @@ def run_epochs(
     val_accuracy_list = []
 
     for epoch in range(num_epochs):
-        loss = train(model, train_loader, optimizer, device=device)
-        val_loss = validate_model(model, val_loader, device=device)
+        loss = train(model, train_loader, optimizer, device)
+        val_loss = validate_model(model, val_loader, device)
 
         losses_list.append(loss)
         val_losses_list.append(val_loss)
 
         lr_scheduler.step()
 
-        accuracy, test_mAP = test_model(model, test_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
-        val_accuracy, val_mAP = test_model(model, val_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
+        accuracy, test_mAP = test_model(model, test_loader, iou_threshold, device)
+        val_accuracy, val_mAP = test_model(model, val_loader, iou_threshold, device)
 
         accuracy_list.append(accuracy)
         val_accuracy_list.append(val_accuracy)

@@ -5,8 +5,7 @@ from torchmetrics.detection import MeanAveragePrecision
 
 from src.data_processing.prepare_data import prepare_data
 
-def test_model(model, test_loader, use_cuda, iou_threshold):
-    device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
+def test_model(model, test_loader, iou_threshold, device):
     model.to(device)
 
     model.eval()

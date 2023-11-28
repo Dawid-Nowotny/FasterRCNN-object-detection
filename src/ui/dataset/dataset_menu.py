@@ -3,7 +3,6 @@ from PyQt5.QtGui import QMovie
 from PyQt5 import QtCore
 
 import random
-import cv2
 
 from .transforms_dialog import SetTransformsDialog
 from .loading_dialog import LoadDatasetDialog

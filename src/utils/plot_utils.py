@@ -18,7 +18,6 @@ def plot_losses(losses, val_losses):
 
     return fig
 
-
 def plot_accuracies(accuracies, val_accuracies):
     epochs = range(1, len(accuracies) + 1)
 

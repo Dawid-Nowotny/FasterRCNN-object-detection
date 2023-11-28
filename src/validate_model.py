@@ -1,6 +1,4 @@
 import torch
-import torch.nn as nn
-from torchvision.transforms import functional as F
 from tqdm import tqdm
 
 from src.data_processing.prepare_data import prepare_data

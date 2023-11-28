@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
         
         myappid = 'mycompany.myproduct.subproduct.version' 
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        time.sleep(1)
+        time.sleep(3)
 
         screen_size = QApplication.primaryScreen().size()
         self.__window_x = int((screen_size.width() - WINDOW_WIDTH) / 2)
@@ -83,7 +83,7 @@ class MainWindow(QMainWindow):
         self.__img_button.clicked.connect(lambda: self.__open_file_for_detection("img"))
         self.__vid_button.clicked.connect(lambda: self.__open_file_for_detection("vid"))
 
-        self.__clear_display_btn = QPushButton("Wyczyść wyświetlany zdjęcie/film", self)
+        self.__clear_display_btn = QPushButton("Wyczyść wyświetlane zdjęcie/film", self)
         self.__clear_display_btn.clicked.connect(lambda: self.__clear_display())
         self.__clear_display_btn.setEnabled(False)
 
@@ -91,8 +91,11 @@ class MainWindow(QMainWindow):
         self.show_training_results.clicked.connect(lambda: self.__show_training_results())
         self.show_training_results.setEnabled(False)
 
+        self.__clear_display_btn.setMaximumWidth(185)
+        self.show_training_results.setMaximumWidth(185)
+
         self.__image_label = QLabel(self)
-        self.__image_label.setAlignment(QtCore.Qt.AlignLeft)
+        self.__image_label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.__video_scene = QGraphicsScene()
         self.__video_view = QGraphicsView(self)
@@ -118,6 +121,7 @@ class MainWindow(QMainWindow):
         
         secRow_vbox.addWidget(self.__clear_display_btn)
         secRow_vbox.addWidget(self.show_training_results)
+        secRow_vbox.addStretch()
 
         hbox.addLayout(vbox)
         hbox.addLayout(secRow_vbox)
@@ -144,6 +148,7 @@ class MainWindow(QMainWindow):
             self.__vid_button.hide()
 
         elif self.interface_state == "display_video":
+            self.frames = [cv2.cvtColor(cv2.resize(frame, (1280, 720)), cv2.COLOR_BGR2RGB) for frame in self.frames]
             height, width, _ = self.frames[0].shape
             bytes_per_line = 3 * width
 
@@ -154,7 +159,14 @@ class MainWindow(QMainWindow):
 
             pixmap = QPixmap.fromImage(QImage(self.frames[0].data, width, height, bytes_per_line, QImage.Format_RGB888))
             self.__video_scene.addPixmap(pixmap)
+
             self.__video_view.setScene(self.__video_scene)
+            self.__video_view.setSceneRect(self.__video_scene.itemsBoundingRect())
+
+            self.__video_view.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+            self.__video_view.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+            self.__video_view.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+            self.__video_view.setRenderHint(QtGui.QPainter.Antialiasing, True)
 
             self.__video_view.show()
             self.__image_label.hide()
@@ -243,7 +255,6 @@ class MainWindow(QMainWindow):
 
                 if self.frames is not None:
                     self.interface_state = "display_video"
-                    self.frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) for frame in self.frames]
                     self.update_interface()
 
     def __on_image_object_detected(self, data):
@@ -305,6 +316,8 @@ class MainWindow(QMainWindow):
 
     def __clear_display(self):
         self.interface_state = "initial"
+        self.__image_label.setScaledContents(False)
+        self.setGeometry(self.__window_x, self.__window_y, WINDOW_WIDTH, WINDOW_HEIGHT)
 
         self.__image_label.hide()
         self.__video_view.hide()

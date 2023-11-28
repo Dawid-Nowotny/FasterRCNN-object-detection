@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QDialog, QWidget, QFileDialog, QSizePolicy, QGraphicsScene, QLabel, QGraphicsView
 from PyQt5.QtCore import QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt5.QtGui import QPixmap, QMovie, QPixmap, QImage
+from PyQt5.QtGui import QPixmap, QMovie, QPixmap, QImage, QIcon, QFont
 from PyQt5 import QtCore, QtWidgets, QtGui
 import cv2
 import ctypes
@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
     def __set_geometry(self):
         self.showNormal()
         self.setWindowTitle("Faster R-CNN object detector")
-        self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
+        self.setWindowIcon(QIcon("src\\ui\\resources\\icon.png"))
         
         myappid = 'mycompany.myproduct.subproduct.version' 
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -77,8 +77,19 @@ class MainWindow(QMainWindow):
         menubar.addMenu(TrainingMenu(self))
 
     def __init_GUI(self):
-        self.__img_button = QPushButton("Rozpoznaj obiekty za zdjęciu", self)
-        self.__vid_button = QPushButton("Rozpoznaj obiekty za wideo", self)
+        self.__img_button = QPushButton("Rozpoznaj obiekty na zdjęciu", self)
+        self.__vid_button = QPushButton("Rozpoznaj obiekty na wideo", self)
+
+        self.__img_button.setIcon(QIcon("src\\ui\\resources\\image_detect.png"))
+        self.__vid_button.setIcon(QIcon("src\\ui\\resources\\video_detect.png"))
+
+        self.__img_button.setIconSize(QtCore.QSize(175, 175))
+        self.__vid_button.setIconSize(QtCore.QSize(175, 175))
+
+        font = QFont()
+        font.setPointSize(28)
+        self.__img_button.setFont(font)
+        self.__vid_button.setFont(font)
 
         self.__img_button.clicked.connect(lambda: self.__open_file_for_detection("img"))
         self.__vid_button.clicked.connect(lambda: self.__open_file_for_detection("vid"))

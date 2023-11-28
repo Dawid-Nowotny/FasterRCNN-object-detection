@@ -91,6 +91,7 @@ class TrainingMenu(QMenu):
         self.__training_dialog.setModal(True)
         self.__training_dialog.setWindowTitle("Trenowanie modelu")
         self.__training_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.__training_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
         self.__training_dialog.closeEvent = self.__on_dialog_close
         self.__training_dialog.setFixedWidth(275)
 

@@ -120,6 +120,7 @@ class ModelMenu(QMenu):
         self.__loader_dialog.setWindowTitle("Ładowanie modelu")
         self.__loader_dialog.setMinimumSize(250, 100)
         self.__loader_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.__loader_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
         self.__loader_dialog.closeEvent = self.__on_dialog_close
 
         gif_label = QLabel(self.__loader_dialog)

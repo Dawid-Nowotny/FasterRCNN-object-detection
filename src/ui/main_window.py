@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QHB
 from PyQt5.QtGui import QPixmap, QMovie, QPixmap, QImage
 from PyQt5 import QtCore, QtWidgets, QtGui
 import cv2
+import ctypes
+import time
 
 from .file_menubar import FileMenubar
 from src.ui.dataset.dataset_menu import DatasetMenu
@@ -53,6 +55,10 @@ class MainWindow(QMainWindow):
         self.showNormal()
         self.setWindowTitle("Faster R-CNN object detector")
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
+        
+        myappid = 'mycompany.myproduct.subproduct.version' 
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        time.sleep(1)
 
         screen_size = QApplication.primaryScreen().size()
         self.__window_x = int((screen_size.width() - WINDOW_WIDTH) / 2)
@@ -61,7 +67,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(self.__window_x, self.__window_y, WINDOW_WIDTH, WINDOW_HEIGHT)
     
     def __init_menubar(self):
-        menubar = FileMenubar()
+        menubar = FileMenubar(self)
 
         self.setMenuBar(menubar)
         menubar.setStyleSheet(MENU_STYLE)
@@ -276,6 +282,7 @@ class MainWindow(QMainWindow):
         self.__detection_dialog.setWindowTitle("Detekcja obiektów")
         self.__detection_dialog.setMinimumSize(200, 100)
         self.__detection_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.__detection_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
         self.__detection_dialog.closeEvent = function
 
         gif_label = QLabel(self.__detection_dialog)

@@ -98,6 +98,7 @@ class DatasetMenu(QMenu):
         self.__loader_dialog.setWindowTitle("Ładowanie zbioru danych")
         self.__loader_dialog.setMinimumSize(200, 100)
         self.__loader_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.__loader_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
         self.__loader_dialog.closeEvent = self.__on_dialog_close
 
         gif_label = QLabel(self.__loader_dialog)
@@ -145,7 +146,7 @@ class DatasetMenu(QMenu):
             if cleared:
                 show_alert("Sukces!", "Zbiory danych został usunięte.", QMessageBox.Information)
             else:
-                show_alert("Błąd!", f"Nie udało się usunąć zbiorów!.", QMessageBox.Warning)
+                show_alert("Błąd!", "Nie udało się usunąć zbiorów!.", QMessageBox.Warning)
         else:
             return
 

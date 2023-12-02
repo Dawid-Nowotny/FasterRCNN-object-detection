@@ -1,9 +1,14 @@
+import torch
 import cv2
 
 from src.label_colors import label_colors
 from src.image_detection.image_detect_objects import image_detect_objects
 
 def process_video(model, video, iou_threshold=0.5, score_threshold=0.6, use_cuda=True):
+    device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
+    model.eval()
+    model.to(device)
+    
     frames = []
     object_detected = False
 

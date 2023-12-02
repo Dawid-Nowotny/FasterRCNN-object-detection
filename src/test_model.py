@@ -6,8 +6,6 @@ from torchmetrics.detection import MeanAveragePrecision
 from src.data_processing.prepare_data import prepare_data
 
 def test_model(model, test_loader, iou_threshold, device):
-    model.to(device)
-
     model.eval()
     test_loader = tqdm(test_loader, total=len(test_loader))
 

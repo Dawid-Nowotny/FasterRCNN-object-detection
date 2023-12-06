@@ -41,7 +41,7 @@ class ModelMenu(QMenu):
 
     def __create_faster_rcnn_model(self):
         if self.parent.model is not None:
-            show_alert("Wiadomość!", "Model jest już załadowany.", QMessageBox.Information)
+            show_alert("Wiadomość!", "Model jest już załadowany.", QMessageBox.Warning)
             return
         
         dialog = ModelDialog(self)
@@ -65,7 +65,7 @@ class ModelMenu(QMenu):
 
     def __clear_model(self):
         if self.parent.model is None:
-            show_alert("Wiadomość!", "Model nie jest załadowany.", QMessageBox.Information)
+            show_alert("Wiadomość!", "Model nie jest załadowany.", QMessageBox.Warning)
             return
 
         self.parent.model = None
@@ -73,7 +73,7 @@ class ModelMenu(QMenu):
 
     def __load_model(self):
         if self.parent.model is not None:
-            show_alert("Wiadomość!", "Model jest już załadowany.", QMessageBox.Information)
+            show_alert("Wiadomość!", "Model jest już załadowany.", QMessageBox.Warning)
             return
         
         dialog = ModelDialog(self)
@@ -139,7 +139,7 @@ class ModelMenu(QMenu):
 
     def __save_model(self):
         if self.parent.model is None:
-            show_alert("Wiadomość!", "Nie ma modelu do zapisania.", QMessageBox.Information)
+            show_alert("Wiadomość!", "Nie ma modelu do zapisania.", QMessageBox.Warning)
             return
 
         options = QFileDialog.Options()

@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):
 
     def __open_file_for_detection(self, type):
         if self.model is None:
-            show_alert("Wiadomość!", "Model nie jest załadowany.\nNie można rozpoznać obiektów.", QMessageBox.Information)
+            show_alert("Wiadomość!", "Model nie jest załadowany.\nNie można rozpoznać obiektów.", QMessageBox.Warning)
             return
         
         dialog = SetDetectionDialog()

@@ -31,7 +31,7 @@ class FileMenubar(QMenuBar):
 
     def __save(self):
         if self.parent.interface_state == "initial":
-            show_alert("Informacja!", "Aktualnie nie wyświetla się żaden plik do zapisania.", QMessageBox.Information)
+            show_alert("Informacja!", "Aktualnie nie wyświetla się żaden plik do zapisania.", QMessageBox.Warning)
             return
         
         options = QFileDialog.Options()

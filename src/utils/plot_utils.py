@@ -18,16 +18,17 @@ def plot_losses(losses, val_losses):
 
     return fig
 
-def plot_accuracies(accuracies, val_accuracies):
-    epochs = range(1, len(accuracies) + 1)
+def plot_accuracies(train_accuracies, test_accuracies, val_accuracies):
+    epochs = range(1, len(train_accuracies) + 1)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(epochs, accuracies, label='Test Accuracy', marker='o', linestyle='-')
+    ax.plot(epochs, train_accuracies, label='Training Accuracy', marker='o', linestyle='-')
+    ax.plot(epochs, test_accuracies, label='Test Accuracy', marker='o', linestyle='-')
     ax.plot(epochs, val_accuracies, label='Validation Accuracy', marker='o', linestyle='-')
 
     ax.set_xlabel('Epochs')
     ax.set_ylabel('Accuracy')
-    ax.set_title('Test and Validation Accuracy Over Time')
+    ax.set_title('Test, Validation, and Training Accuracy Over Time')
 
     ax.legend()
     ax.grid(True)

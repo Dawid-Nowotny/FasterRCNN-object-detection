@@ -8,15 +8,15 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 from src.utils.plot_utils import plot_losses, plot_accuracies
 
 class TrainingResultsDialog(QDialog):
-    def __init__(self, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP, parent=None):
+    def __init__(self, losses_list, val_losses_list, train_accuracy_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP, parent=None):
         super().__init__(parent)
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw parametry SGD")
+        self.setWindowTitle("Wyniki treningu")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
 
         self.__losses_fig = plot_losses(losses_list, val_losses_list)
-        self.__accuracy_fig = plot_accuracies(accuracy_list, val_accuracy_list)
+        self.__accuracy_fig = plot_accuracies(train_accuracy_list, accuracy_list, val_accuracy_list)
         self.__test_mAP = round(self.fetch_mAP(test_mAP), 2)
         self.__val_mAP = round(self.fetch_mAP(val_mAP), 2)
 

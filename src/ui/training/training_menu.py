@@ -67,11 +67,12 @@ class TrainingMenu(QMenu):
         show_alert("Sukces!", "Model został wytrenowany!", QMessageBox.Information)
 
     def __on_model_trained(self, data):
-        model, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP = data
+        model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP = data
         self.parent.model = model
         self.parent.losses_list = losses_list 
         self.parent.val_losses_list = val_losses_list
-        self.parent.accuracy_list = accuracy_list
+        self.parent.train_accuracy_list = train_accuracy_list
+        self.parent.accuracy_list = test_accuracy_list
         self.parent.val_accuracy_list = val_accuracy_list
         self.parent.test_mAP = test_mAP
         self.parent.val_mAP = val_mAP

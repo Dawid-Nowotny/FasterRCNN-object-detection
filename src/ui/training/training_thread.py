@@ -25,11 +25,11 @@ class TrainingThread(QThread):
         self.use_CUDA = use_CUDA
 
     def run(self):
-        model, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP = run_epochs(
+        model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP = run_epochs(
             self.model, self.train_loader, self.val_loader, self.test_loader,
             self.epochs, self.lr, self.momentum, self.weight_decay, 
             self.dampening, self.nesterov, self.maximize,
             self.step_size, self.gamma, self.iou_threshold, self.use_CUDA
         )
-        self.model_trained.emit((model, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP))
+        self.model_trained.emit((model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP))
         self.finished.emit()

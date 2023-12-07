@@ -1,5 +1,9 @@
 from torchvision.transforms import transforms
 
+only_tensor_transform = transforms.Compose([
+    transforms.ToTensor(),
+])
+
 def create_transforms(resize, resize1, resize2,
                     horizontal_flip, vertical_flip, 
                     color_jitter, brightness, contrast, saturation, hue, 

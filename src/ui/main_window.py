@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         self.model = None
         self.losses_list = None 
         self.val_losses_list = None
+        self.train_accuracy_list = None
         self.accuracy_list = None
         self.val_accuracy_list = None
         self.test_mAP = None
@@ -327,7 +328,7 @@ class MainWindow(QMainWindow):
         self.__detection_dialog.setLayout(layout)
 
     def __show_training_results(self):
-        dialog = TrainingResultsDialog(self.losses_list, self.val_losses_list, self.accuracy_list, self.val_accuracy_list, 
+        dialog = TrainingResultsDialog(self.losses_list, self.val_losses_list, self.train_accuracy_list, self.accuracy_list, self.val_accuracy_list, 
                                        self.test_mAP, self.val_mAP, self)
         dialog.exec_()
 

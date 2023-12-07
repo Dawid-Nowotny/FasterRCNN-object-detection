@@ -8,7 +8,7 @@ from .test_model import test_model
 
 def run_epochs(
         model, train_loader, val_loader, test_loader,
-        num_epochs, learning_rate, momentum, weight_decay, 
+        num_epochs, learning_rate, momentum, weight_decay,
         dampening, nesterov, maximize,
         step_size, gamma, iou_threshold, use_cuda
         ):
@@ -20,7 +20,8 @@ def run_epochs(
 
     losses_list = []
     val_losses_list = []
-    accuracy_list = []
+    train_accuracy_list = []
+    test_accuracy_list = []
     val_accuracy_list = []
 
     for epoch in range(num_epochs):
@@ -32,18 +33,21 @@ def run_epochs(
 
         lr_scheduler.step()
 
-        accuracy, test_mAP = test_model(model, test_loader, iou_threshold, device)
+        train_accuracy, _ = test_model(model, train_loader, iou_threshold, device)
+        test_accuracy, test_mAP = test_model(model, test_loader, iou_threshold, device)
         val_accuracy, val_mAP = test_model(model, val_loader, iou_threshold, device)
 
-        accuracy_list.append(accuracy)
+        train_accuracy_list.append(train_accuracy)
+        test_accuracy_list.append(test_accuracy)
         val_accuracy_list.append(val_accuracy)
 
         print(f"Epoch {epoch+1}/{num_epochs}")
         print(f"Validation Loss: {val_loss}")
         print(f"Loss: {loss}")
-        print(f"Test Accuracy: {accuracy}")
+        print(f"Train Accuracy: {train_accuracy}")
+        print(f"Test Accuracy: {test_accuracy}")
         print(f"Validation Accuracy: {val_accuracy}")
         print(f"Test mAP: {test_mAP}")
         print(f"Validation mAP : {val_mAP}")
 
-    return model, losses_list, val_losses_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP
+    return model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP

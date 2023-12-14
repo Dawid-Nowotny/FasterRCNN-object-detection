@@ -9,7 +9,7 @@ from .model_dialog import ModelDialog
 from src.models.create_fasterrcnn_mini_darknet_nano_head import create_fasterrcnn_mini_darknet_nano_head
 from src.models.create_fasterrcnn_mobilenet_v3_large_320_fpn import create_fasterrcnn_mobilenet_v3_large_320_fpn
 from src.models.create_fasterrcnn_mobilenet_v3_large_fpn import create_fasterrcnn_mobilenet_v3_large_fpn
-from src.models.create_fasterrcnn_resnet50_fpn_v2 import create_fasterrcnn_resnet50_fpn_v2
+from src.models.create_fasterrcnn_vgg16 import create_fasterrcnn_vgg16
 
 from src.models.save_model import save_model
 
@@ -59,7 +59,7 @@ class ModelMenu(QMenu):
         elif dialog.option == "Mobilenet_v3 large":
             self.parent.model = create_fasterrcnn_mobilenet_v3_large_fpn()
         else:
-            self.parent.model = create_fasterrcnn_resnet50_fpn_v2()
+            self.parent.model = create_fasterrcnn_vgg16()
 
         show_alert("Sukces!", f"Model {dialog.option} został stworzony!", QMessageBox.Information)
 
@@ -69,6 +69,7 @@ class ModelMenu(QMenu):
             return
 
         self.parent.model = None
+        self.parent.show_training_results.setEnabled(False)
         show_alert("Wiadomość!", "Model został wyczyszczony.", QMessageBox.Information)
 
     def __load_model(self):

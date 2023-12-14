@@ -17,8 +17,8 @@ class TrainingResultsDialog(QDialog):
 
         self.__losses_fig = plot_losses(losses_list, val_losses_list)
         self.__accuracy_fig = plot_accuracies(train_accuracy_list, accuracy_list, val_accuracy_list)
-        self.__test_mAP = round(self.fetch_mAP(test_mAP), 2)
-        self.__val_mAP = round(self.fetch_mAP(val_mAP), 2)
+        self.__test_mAP, self.__test_mAP_50 = self.fetch_mAP(test_mAP)
+        self.__val_mAP, self.__val_mAP_50 = self.fetch_mAP(val_mAP)
 
         self.__set_layouts()
 
@@ -33,6 +33,11 @@ class TrainingResultsDialog(QDialog):
         vbox1.addWidget(QLabel(str(self.__test_mAP), self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addWidget(QLabel("mAP na zbiorze walidacyjnym:", self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addWidget(QLabel(str(self.__val_mAP), self), alignment=QtCore.Qt.AlignCenter)
+
+        vbox1.addWidget(QLabel("mAP_50 na zbiorze testowym:", self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel(str(self.__test_mAP_50), self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel("mAP_50 na zbiorze walidacyjnym:", self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel(str(self.__val_mAP_50), self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addStretch()
 
         canvas_losses = FigureCanvas(self.__losses_fig)
@@ -59,4 +64,6 @@ class TrainingResultsDialog(QDialog):
         self.setLayout(hbox)
 
     def fetch_mAP(self, metrics):
-        return metrics['map'].item() * 100 if metrics['map'] is not None else None
+        map_value = metrics['map'].item() * 100 if metrics['map'] is not None else None
+        map_50_value = metrics['map_50'].item() * 100 if metrics['map_50'] is not None else None
+        return round(map_value, 2), round(map_50_value, 2)

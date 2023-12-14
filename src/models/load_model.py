@@ -3,7 +3,7 @@ import torch
 from .create_fasterrcnn_mini_darknet_nano_head import create_fasterrcnn_mini_darknet_nano_head
 from .create_fasterrcnn_mobilenet_v3_large_320_fpn import create_fasterrcnn_mobilenet_v3_large_320_fpn
 from .create_fasterrcnn_mobilenet_v3_large_fpn import create_fasterrcnn_mobilenet_v3_large_fpn
-from .create_fasterrcnn_resnet50_fpn_v2 import create_fasterrcnn_resnet50_fpn_v2
+from .create_fasterrcnn_vgg16 import create_fasterrcnn_vgg16
 
 def load_model(model_type, path):
     try:
@@ -16,7 +16,7 @@ def load_model(model_type, path):
         elif model_type == "Mobilenet_v3 large":
             model = create_fasterrcnn_mobilenet_v3_large_fpn().to(device)
         else:
-            model = create_fasterrcnn_resnet50_fpn_v2().to(device)
+            model = create_fasterrcnn_vgg16().to(device)
         
         model.load_state_dict(torch.load(path, map_location=device))
         

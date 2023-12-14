@@ -46,6 +46,8 @@ class MainWindow(QMainWindow):
         self.image = None
         self.frames = None
 
+        self.__is_replay = False
+
         self.__set_geometry()
         self.__init_menubar()
         self.__init_GUI()
@@ -99,7 +101,7 @@ class MainWindow(QMainWindow):
         self.__clear_display_btn.setEnabled(False)
 
         self.__replay = QPushButton("Odtwórz ponownie film", self)
-        self.__replay.clicked.connect(lambda: self.update_interface())
+        self.__replay.clicked.connect(lambda: self.__handle_replay())
         self.__replay.setEnabled(False)
 
         self.show_training_results = QPushButton("Pokaż wyniki treningu", self)
@@ -116,6 +118,10 @@ class MainWindow(QMainWindow):
         self.__video_view = QGraphicsView(self)
         self.__video_view.setScene(self.__video_scene)
         self.__video_view.setAlignment(QtCore.Qt.AlignCenter)
+
+    def __handle_replay(self):
+        self.__is_replay = True
+        self.update_interface()
 
     def __set_layout(self):
         self.__img_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -164,6 +170,9 @@ class MainWindow(QMainWindow):
             self.__vid_button.hide()
 
         elif self.interface_state == "display_video":
+            if not self.__is_replay:
+                self.setGeometry(self.__window_x, self.__window_y, 1474, 759)
+            
             self.__replay.setEnabled(False)
             height, width, _ = self.frames[0].shape
             bytes_per_line = 3 * width
@@ -188,6 +197,7 @@ class MainWindow(QMainWindow):
             self.__image_label.hide()
             self.__img_button.hide()
             self.__vid_button.hide()
+            self.__is_replay = False
 
     def display_next_frame(self):
         if self.frames and self.frame_index < len(self.frames):
@@ -335,6 +345,12 @@ class MainWindow(QMainWindow):
     def __clear_display(self):
         self.interface_state = "initial"
         self.__image_label.setScaledContents(False)
+
+        self.showNormal()
+        screen_size = QApplication.primaryScreen().size()
+        self.__window_x = int((screen_size.width() - WINDOW_WIDTH) / 2)
+        self.__window_y = int((screen_size.height() - WINDOW_HEIGHT) / 2)
+
         self.setGeometry(self.__window_x, self.__window_y, WINDOW_WIDTH, WINDOW_HEIGHT)
 
         self.__image_label.hide()

@@ -1,7 +1,7 @@
 import torch
 from torchvision.transforms import functional as F
-from torchvision.ops import nms
 
+from .non_maximum_suppression import non_maximum_suppression
 from .label_mapping import label_mapping
 
 def image_detect_objects(model, image, iou_threshold=0.2, score_threshold=0.6, use_cuda=True):
@@ -25,7 +25,7 @@ def image_detect_objects(model, image, iou_threshold=0.2, score_threshold=0.6, u
     selected_labels = labels_res[selected_indices]
     selected_scores = scores_res[selected_indices]
 
-    keep_indices = nms(selected_boxes, selected_scores, iou_threshold)
+    keep_indices = non_maximum_suppression(selected_boxes, selected_scores, selected_labels, iou_threshold, device)
     selected_boxes = selected_boxes[keep_indices]
     selected_labels = selected_labels[keep_indices]
     selected_scores = selected_scores[keep_indices]

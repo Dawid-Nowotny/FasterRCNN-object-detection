@@ -1,13 +1,9 @@
 import torch
-import torch.nn as nn
-from torchvision.transforms import functional as F
 from tqdm import tqdm
 
 from src.data_processing.prepare_data import prepare_data
 
 def validate_model(model, val_loader, device):
-    model.to(device)
-
     total_val_loss = 0.0
     val_loader = tqdm(val_loader, total=len(val_loader))
 

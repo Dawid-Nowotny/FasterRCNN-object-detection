@@ -6,42 +6,48 @@ from .train import train
 from .validate_model import validate_model
 from .test_model import test_model
 
-from models.save_model import save_model
+def run_epochs(
+        model, train_loader, val_loader, test_loader,
+        num_epochs, learning_rate, momentum, weight_decay,
+        dampening, nesterov, maximize,
+        step_size, gamma, iou_threshold, use_cuda
+        ):
 
-from utils.plot_utils import plot_losses, plot_accuracies
-
-def run_epochs(model, train_loader, val_loader, test_loader, num_epochs=10, learning_rate=0.001, iou_threshold=0.6, use_cuda=True):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
     model.to(device)
-    optimizer = SGD(model.parameters(), lr=learning_rate, momentum=0.9)
-    lr_scheduler = StepLR(optimizer, step_size=5, gamma=0.1)
+    optimizer = SGD(model.parameters(), lr=learning_rate, momentum=momentum, dampening=dampening, weight_decay=weight_decay, nesterov=nesterov, maximize=maximize)
+    lr_scheduler = StepLR(optimizer, step_size=step_size, gamma=gamma)
 
     losses_list = []
     val_losses_list = []
-    accuracy_list = []
+    train_accuracy_list = []
+    test_accuracy_list = []
     val_accuracy_list = []
 
     for epoch in range(num_epochs):
-        loss = train(model, train_loader, optimizer, device=device)
-        val_loss = validate_model(model, val_loader, device=device)
+        loss = train(model, train_loader, optimizer, device)
+        val_loss = validate_model(model, val_loader, device)
 
         losses_list.append(loss)
         val_losses_list.append(val_loss)
 
         lr_scheduler.step()
 
-        accuracy = test_model(model, test_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
-        val_accuracy = test_model(model, val_loader, use_cuda=use_cuda, iou_threshold=iou_threshold)
+        train_accuracy, _ = test_model(model, train_loader, iou_threshold, device)
+        test_accuracy, test_mAP = test_model(model, test_loader, iou_threshold, device)
+        val_accuracy, val_mAP = test_model(model, val_loader, iou_threshold, device)
 
-        accuracy_list.append(accuracy)
+        train_accuracy_list.append(train_accuracy)
+        test_accuracy_list.append(test_accuracy)
         val_accuracy_list.append(val_accuracy)
 
         print(f"Epoch {epoch+1}/{num_epochs}")
         print(f"Validation Loss: {val_loss}")
         print(f"Loss: {loss}")
-        print(f"Test Accuracy: {accuracy}")
+        print(f"Train Accuracy: {train_accuracy}")
+        print(f"Test Accuracy: {test_accuracy}")
         print(f"Validation Accuracy: {val_accuracy}")
+        print(f"Test mAP: {test_mAP}")
+        print(f"Validation mAP : {val_mAP}")
 
-    save_model(model)
-    plot_losses(losses_list, val_losses_list)
-    plot_accuracies(accuracy_list, val_accuracy_list)
+    return model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP

@@ -1,8 +1,6 @@
-import torch
 from tqdm import tqdm
 
 from src.data_processing.prepare_data import prepare_data
-from .validate_model import validate_model
 
 def train(model, train_loader, optimizer, device):
     model.train(True)

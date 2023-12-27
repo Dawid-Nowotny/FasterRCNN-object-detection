@@ -1,17 +1,25 @@
 import torch
 
+from .create_fasterrcnn_mini_darknet_nano_head import create_fasterrcnn_mini_darknet_nano_head
 from .create_fasterrcnn_mobilenet_v3_large_320_fpn import create_fasterrcnn_mobilenet_v3_large_320_fpn
-from ..config import MODELS_PATH
+from .create_fasterrcnn_mobilenet_v3_large_fpn import create_fasterrcnn_mobilenet_v3_large_fpn
+from .create_fasterrcnn_vgg16 import create_fasterrcnn_vgg16
 
-def load_model(name):
+def load_model(model_type, path):
     try:
-        if torch.cuda.is_available():
-            model = create_fasterrcnn_mobilenet_v3_large_320_fpn().cuda()
-            model.load_state_dict(torch.load(f"{MODELS_PATH}/{name}.pth"))
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+        if model_type == "Mini Darknet":
+            model = create_fasterrcnn_mini_darknet_nano_head().to(device)
+        elif model_type == "Mobilenet_v3 large 320":
+            model = create_fasterrcnn_mobilenet_v3_large_320_fpn().to(device)
+        elif model_type == "Mobilenet_v3 large":
+            model = create_fasterrcnn_mobilenet_v3_large_fpn().to(device)
         else:
-            model = create_fasterrcnn_mobilenet_v3_large_320_fpn()
-            model.load_state_dict(torch.load(f"{MODELS_PATH}/{name}.pth", map_location=torch.device('cpu')))
+            model = create_fasterrcnn_vgg16().to(device)
+        
+        model.load_state_dict(torch.load(path, map_location=device))
         
         return model
-    except FileNotFoundError:
-        raise FileNotFoundError(f"The model '{name}' was not found in {MODELS_PATH}")
+    except:
+        return None

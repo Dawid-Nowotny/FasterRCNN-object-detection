@@ -4,6 +4,6 @@ CACHE_PATH = 'cache/'
 
 MODELS_PATH = 'saved_models/'
 
-BATCH_SIZE = 4
+EVALUATION_DATA = 'evaluation_data/'
 
 NUM_CLASSES = 20

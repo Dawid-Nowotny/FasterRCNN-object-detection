@@ -1,0 +1,3 @@
+--index-url https://download.pytorch.org/whl/nightly/cu121
+torch==2.3.0.dev20240108+cu121
+torchvision==0.18.0.dev20240109+cu121

@@ -272,7 +272,6 @@ class MainWindow(QMainWindow):
                     show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)
                     return
                     
-                print(video)
                 self.__init_detection_dialog(self.__on_dialog_close_video)
                 self.__video__detection_thread = VideoDetectionThread(self.model, video, data_shelter.iou_threshold_detect, data_shelter.score_threshold_detect, data_shelter.use_CUDA_detect)
                 self.__video__detection_thread.detection_finished.connect(self.__on_video_object_detected)

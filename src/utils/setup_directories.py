@@ -8,6 +8,3 @@ def setup_directories():
     for path in paths:
         if not exists(path):
             makedirs(path)
-            print(f"Created directory: {path}")
-        else:
-            print(f"Directory already exists: {path}")

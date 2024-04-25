@@ -41,13 +41,4 @@ def run_epochs(
         test_accuracy_list.append(test_accuracy)
         val_accuracy_list.append(val_accuracy)
 
-        print(f"Epoch {epoch+1}/{num_epochs}")
-        print(f"Validation Loss: {val_loss}")
-        print(f"Loss: {loss}")
-        print(f"Train Accuracy: {train_accuracy}")
-        print(f"Test Accuracy: {test_accuracy}")
-        print(f"Validation Accuracy: {val_accuracy}")
-        print(f"Test mAP: {test_mAP}")
-        print(f"Validation mAP : {val_mAP}")
-
     return model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP

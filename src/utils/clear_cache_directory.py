@@ -12,8 +12,7 @@ def clear_cache_directory():
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
             return True
-        except Exception as e:
-            print(f"Nie udało się opróżnić {CACHE_PATH}. Powód: {e}")
+        except:
             return False
     else:
         return False

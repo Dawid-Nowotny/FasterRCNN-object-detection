@@ -2,7 +2,7 @@ joblib==1.2.0
 matplotlib==3.7.1
 numpy==1.23.5
 opencv_python==4.7.0.72
-Pillow==10.2.0
+Pillow==10.3.0
 PyQt5==5.15.10
 torchmetrics==1.2.1
 tqdm==4.66.1

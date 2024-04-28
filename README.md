@@ -6,11 +6,11 @@ Object detection on loaded images and videos is supported, providing confidence 
 ## Screenshots
 | Main application view | Training results(*) |
 | -------|--------------|
-| <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/4d3822f4-1376-4fcf-ae2d-f7cd966f0d48" width="470">  | <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/0957928b-5433-4c6a-a0e1-2a01a7ad777c" width="470"> |
+| <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/4d3822f4-1376-4fcf-ae2d-f7cd966f0d48" width="380">  | <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/0957928b-5433-4c6a-a0e1-2a01a7ad777c" width="380"> |
 
 | Object detection on image | Object detection on video |
 | --------------|--------------|
-| <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/9e71bcf1-3820-45fe-ba68-442a79f614ec" width="470">  | <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/480c4ac2-1fda-49d4-afe0-e19b709a7079" width="470"> |
+| <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/9e71bcf1-3820-45fe-ba68-442a79f614ec" width="380">  | <img src="https://github.com/Dawid-Nowotny/FasterRCNN-object-detection/assets/93731073/480c4ac2-1fda-49d4-afe0-e19b709a7079" width="380"> |
 
 *These training results are provided for demonstration purposes only. They serve as examples to showcase the functionality of the application.
 

@@ -6,12 +6,17 @@ from src.ui.spinbox_creator import create_spinbox
 from src.ui.show_alert import show_alert
 from src.ui.data_shelter import DataShelter
 
+if DataShelter().lang == "pl":
+    from src.ui.translations.pl import TRANSFORMS_TITLE, OPERATION_FAILED, ALERT_ERROR
+else:
+    from src.ui.translations.en import TRANSFORMS_TITLE, OPERATION_FAILED, ALERT_ERROR
+
 class SetTransformsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.finished = False
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw transformacje")
+        self.setWindowTitle(TRANSFORMS_TITLE)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         
@@ -178,7 +183,7 @@ class SetTransformsDialog(QDialog):
             data_shelter.std3 = self.__std3.layout().itemAt(0).widget().value()
 
         except Exception as e:
-            show_alert("Błąd!", f"Error: {str(e)}\nNie udało się wykonac operacji", QMessageBox.Critical)
+            show_alert(ALERT_ERROR, f"Error: {str(e)}\n{OPERATION_FAILED}", QMessageBox.Critical)
             self.close()
 
         self.finished = True

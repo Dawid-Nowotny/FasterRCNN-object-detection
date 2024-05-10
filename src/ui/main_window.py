@@ -26,6 +26,20 @@ from src.config import EVALUATION_DATA
 from src.image_detection.load_image import load_image
 from src.video_detection.load_video import load_video
 
+from .data_shelter import DataShelter
+if DataShelter().lang == "pl":
+    from .translations.pl import (
+        MAIN_WINDOW_DETECT_IMG, MAIN_WINDOW_DETECT_VID, CLEAR, REPLAY, TRAINING_RESULTS, MODEL_NOT_LOADED, CHOOSE_IMG, LOADING_IMG_ERROR, CHOOSE_VID, LOADING_VID_ERROR,
+        INVALID_FILE, NON_RECOGNIZED_OBJECT_IMG, NON_RECOGNIZED_OBJECT_VID, INTERRUPTED_DETECTION, DETECTION_OBJ, DETECTION_IN_PROGRESS, TIME_ALERT_LABEL, 
+        ALERT_MSG, ALERT_WARNING, ALERT_INTERRUPTED
+    )
+else:
+    from .translations.en import (
+        MAIN_WINDOW_DETECT_IMG, MAIN_WINDOW_DETECT_VID, CLEAR, REPLAY, TRAINING_RESULTS, MODEL_NOT_LOADED, CHOOSE_IMG, LOADING_IMG_ERROR, CHOOSE_VID, LOADING_VID_ERROR,
+        INVALID_FILE, NON_RECOGNIZED_OBJECT_IMG, NON_RECOGNIZED_OBJECT_VID, INTERRUPTED_DETECTION, DETECTION_OBJ, DETECTION_IN_PROGRESS, TIME_ALERT_LABEL, 
+        ALERT_MSG, ALERT_WARNING, ALERT_INTERRUPTED
+    )
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -79,8 +93,8 @@ class MainWindow(QMainWindow):
         menubar.addMenu(TrainingMenu(self))
 
     def __init_GUI(self):
-        self.__img_button = QPushButton("Rozpoznaj obiekty na zdjęciu", self)
-        self.__vid_button = QPushButton("Rozpoznaj obiekty na wideo", self)
+        self.__img_button = QPushButton(MAIN_WINDOW_DETECT_IMG, self)
+        self.__vid_button = QPushButton(MAIN_WINDOW_DETECT_VID, self)
 
         self.__img_button.setIcon(QIcon("src\\ui\\resources\\image_detect.png"))
         self.__vid_button.setIcon(QIcon("src\\ui\\resources\\video_detect.png"))
@@ -96,15 +110,15 @@ class MainWindow(QMainWindow):
         self.__img_button.clicked.connect(lambda: self.__open_file_for_detection("img"))
         self.__vid_button.clicked.connect(lambda: self.__open_file_for_detection("vid"))
 
-        self.__clear_display_btn = QPushButton("Wyczyść wyświetlane zdjęcie/film", self)
+        self.__clear_display_btn = QPushButton(CLEAR, self)
         self.__clear_display_btn.clicked.connect(lambda: self.__clear_display())
         self.__clear_display_btn.setEnabled(False)
 
-        self.__replay = QPushButton("Odtwórz ponownie film", self)
+        self.__replay = QPushButton(REPLAY, self)
         self.__replay.clicked.connect(lambda: self.__handle_replay())
         self.__replay.setEnabled(False)
 
-        self.show_training_results = QPushButton("Pokaż wyniki treningu", self)
+        self.show_training_results = QPushButton(TRAINING_RESULTS, self)
         self.show_training_results.clicked.connect(lambda: self.__show_training_results())
         self.show_training_results.setEnabled(False)
 
@@ -215,7 +229,7 @@ class MainWindow(QMainWindow):
 
     def __open_file_for_detection(self, type):
         if self.model is None:
-            show_alert("Wiadomość!", "Model nie jest załadowany.\nNie można rozpoznać obiektów.", QMessageBox.Warning)
+            show_alert(ALERT_MSG, MODEL_NOT_LOADED, QMessageBox.Warning)
             return
         
         dialog = SetDetectionDialog()
@@ -232,14 +246,14 @@ class MainWindow(QMainWindow):
         file_dialog = QFileDialog()
 
         if type == "img":
-            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz obraz", EVALUATION_DATA, "Image Files (*.png *.jpg)", options=options)
+            file_path, _ = file_dialog.getOpenFileName(self, CHOOSE_IMG, EVALUATION_DATA, "Image Files (*.png *.jpg)", options=options)
 
             if file_path:
                 try:
                     image = load_image(file_path)
 
                     if image is None:
-                        show_alert("Ostrzeżenie!", "Błąd podczas ładowania zdjęcia.", QMessageBox.Warning)
+                        show_alert(ALERT_WARNING, LOADING_IMG_ERROR, QMessageBox.Warning)
                         return
 
                 except:
@@ -258,18 +272,18 @@ class MainWindow(QMainWindow):
                     self.update_interface()
 
         elif type == "vid":
-            file_path, _ = file_dialog.getOpenFileName(self, "Wybierz wideo", EVALUATION_DATA, "Video Files (*.mp4)", options=options)
+            file_path, _ = file_dialog.getOpenFileName(self, CHOOSE_VID, EVALUATION_DATA, "Video Files (*.mp4)", options=options)
 
             if file_path:
                 try:
                     video = load_video(file_path)
 
                     if video is None:
-                        show_alert("Ostrzeżenie!", "Błąd podczas ładowania wideo.", QMessageBox.Warning)
+                        show_alert(ALERT_WARNING, LOADING_VID_ERROR, QMessageBox.Warning)
                         return
                     
                 except:
-                    show_alert("Ostrzeżenie!", "Niepoprawny plik.", QMessageBox.Warning)
+                    show_alert(ALERT_WARNING, INVALID_FILE, QMessageBox.Warning)
                     return
                     
                 self.__init_detection_dialog(self.__on_dialog_close_video)
@@ -289,7 +303,7 @@ class MainWindow(QMainWindow):
         self.__detection_dialog.close()
 
         if self.image is None:
-            show_alert("Informacja!", "Nie rozpoznano żadnego obiektu na zdjęciu.", QMessageBox.Information)
+            show_alert(ALERT_MSG, NON_RECOGNIZED_OBJECT_IMG, QMessageBox.Information)
             return
         
     def __on_video_object_detected(self, data):
@@ -297,27 +311,27 @@ class MainWindow(QMainWindow):
         self.__detection_dialog.close()
 
         if self.frames is None:
-            show_alert("Informacja!", "Nie rozpoznano żadnego obiektu na całym wideo.", QMessageBox.Information)
+            show_alert(ALERT_MSG, NON_RECOGNIZED_OBJECT_VID, QMessageBox.Information)
             return
 
     def __on_dialog_close_image(self, event):
         if self.__image__detection_thread.isRunning():
             self.__image__detection_thread.terminate()
-            show_alert("Przerwano!", "Detekcja obiektów została przerwana!", QMessageBox.Warning, self.__detection_dialog)
+            show_alert(ALERT_INTERRUPTED, INTERRUPTED_DETECTION, QMessageBox.Warning, self.__detection_dialog)
             self.__detection_dialog.lower()
             event.accept()
 
     def __on_dialog_close_video(self, event):
         if self.__video__detection_thread.isRunning():
             self.__video__detection_thread.terminate()
-            show_alert("Przerwano!", "Detekcja obiektów została przerwana!", QMessageBox.Warning, self.__detection_dialog)
+            show_alert(ALERT_INTERRUPTED, INTERRUPTED_DETECTION, QMessageBox.Warning, self.__detection_dialog)
             self.__detection_dialog.lower()
             event.accept()
 
     def __init_detection_dialog(self, function):
         self.__detection_dialog = QDialog(self)
         self.__detection_dialog.setModal(True)
-        self.__detection_dialog.setWindowTitle("Detekcja obiektów")
+        self.__detection_dialog.setWindowTitle(DETECTION_OBJ)
         self.__detection_dialog.setMinimumSize(200, 100)
         self.__detection_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.__detection_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
@@ -330,9 +344,9 @@ class MainWindow(QMainWindow):
         movie.start()
 
         layout = QVBoxLayout(self.__detection_dialog)
-        layout.addWidget(QLabel("Trwa detekcja...", self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel(DETECTION_IN_PROGRESS, self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
-        layout.addWidget(QLabel("Może to zająć do kilku do kilkunastu minut", self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel(TIME_ALERT_LABEL, self.__detection_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__detection_dialog.setLayout(layout)
 

@@ -14,25 +14,40 @@ from src.data_processing.transforms import create_transforms
 from src.utils.get_dataset_sample import get_dataset_sample
 from src.utils.clear_cache_directory import clear_cache_directory
 
+if DataShelter().lang == "pl":
+    from src.ui.translations.pl import (
+        DATASET_MENU_TITLE, LOAD_DATASET_TITLE, SET_TRANSFORMS_TEXT, DATASET_SAMPLE_TEXT, CLEAR_DATASET_TEXT, CLEAR_CACHE_TEXT, 
+        ALREADY_LOADED_TEXT, DATASET_LOADED_TEXT, LOADING_DATASET_INTERRUPTED_TEXT, LOADING_DATASET_TEXT, LOADING_TEXT, TIME_DATASET_TEXT,
+        NONE_DATASET_TEXT, CLEARED_DATASET_TEXT, QUESTION_DATASET_DEL, CLEARD_DATASET_TEXT, CLEARD_DATASET_FAILED_TEXT, DATASET_NOT_LOADED_TEXT,
+        ALERT_ERROR, ALERT_WARNING, ALERT_SUCCESS, ALERT_MSG, ALERT_INTERRUPTED, ALERT_QUESTION, YES, NO
+        )
+else:
+    from src.ui.translations.en import (
+        DATASET_MENU_TITLE, LOAD_DATASET_TITLE, SET_TRANSFORMS_TEXT, DATASET_SAMPLE_TEXT, CLEAR_DATASET_TEXT, CLEAR_CACHE_TEXT, 
+        ALREADY_LOADED_TEXT, DATASET_LOADED_TEXT, LOADING_DATASET_INTERRUPTED_TEXT, LOADING_DATASET_TEXT, LOADING_TEXT, TIME_DATASET_TEXT,
+        NONE_DATASET_TEXT, CLEARED_DATASET_TEXT, QUESTION_DATASET_DEL, CLEARD_DATASET_TEXT, CLEARD_DATASET_FAILED_TEXT, DATASET_NOT_LOADED_TEXT,
+        ALERT_ERROR, ALERT_WARNING, ALERT_SUCCESS, ALERT_MSG, ALERT_INTERRUPTED, ALERT_QUESTION, YES, NO
+        )
+    
 class DatasetMenu(QMenu):
     def __init__(self, parent):
-        super().__init__("Zbiór danych", parent)
+        super().__init__(DATASET_MENU_TITLE, parent)
         self.parent = parent
         self.screen_geometry = QApplication.desktop().screenGeometry()
 
-        load_dataset = QAction("Wczytaj zbiór danych", self)
+        load_dataset = QAction(LOAD_DATASET_TITLE, self)
         load_dataset.triggered.connect(lambda: self.__load_dataset())
 
-        set_transforms = QAction("Ustaw transformacje", self)
+        set_transforms = QAction(SET_TRANSFORMS_TEXT, self)
         set_transforms.triggered.connect(lambda: self.__set_transforms())
 
-        show_sample = QAction("Pokaż przykład ze zbioru", self)
+        show_sample = QAction(DATASET_SAMPLE_TEXT, self)
         show_sample.triggered.connect(lambda: self.__show_sample())
 
-        clear_dataset = QAction("Wyczyść załadowany zbiór", self)
+        clear_dataset = QAction(CLEAR_DATASET_TEXT, self)
         clear_dataset.triggered.connect(lambda: self.__clear_dataset())
 
-        clear_cache = QAction("Usuń pobrane zbiory danych", self)
+        clear_cache = QAction(CLEAR_CACHE_TEXT, self)
         clear_cache.triggered.connect(lambda: self.__clear_cache())
 
         self.addAction(load_dataset)
@@ -45,7 +60,7 @@ class DatasetMenu(QMenu):
 
     def __load_dataset(self):
         if self.parent.train_loader is not None:
-            show_alert("Ostrzeżenie!", "Zbiór danych został już załadowany!\nNie można załadować po raz kolejny!", QMessageBox.Warning)
+            show_alert(ALERT_WARNING, ALREADY_LOADED_TEXT, QMessageBox.Warning)
             return
 
         dialog = LoadDatasetDialog()
@@ -76,7 +91,7 @@ class DatasetMenu(QMenu):
 
     def __on_loading_finished(self):
         self.__loader_dialog.close()
-        show_alert("Sukces!", "Zbiór danych został załadowany!", QMessageBox.Information)
+        show_alert(ALERT_SUCCESS, DATASET_LOADED_TEXT, QMessageBox.Information)
 
     def __on_data_loaded(self, data):
         train_loader, val_loader, test_loader = data
@@ -87,14 +102,14 @@ class DatasetMenu(QMenu):
     def __on_dialog_close(self, event):
         if self.__loader_thread.isRunning():
             self.__loader_thread.terminate()
-            show_alert("Przerwano!", "Ładowanie zbioru danych zostało przerwane!", QMessageBox.Warning, self.__loader_dialog)
+            show_alert(ALERT_INTERRUPTED, LOADING_DATASET_INTERRUPTED_TEXT, QMessageBox.Warning, self.__loader_dialog)
             self.__loader_dialog.lower()
             event.accept()
 
     def __init_loader_dialog(self):
         self.__loader_dialog = QDialog(self)
         self.__loader_dialog.setModal(True)
-        self.__loader_dialog.setWindowTitle("Ładowanie zbioru danych")
+        self.__loader_dialog.setWindowTitle(LOADING_DATASET_TEXT)
         self.__loader_dialog.setMinimumSize(200, 100)
         self.__loader_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.__loader_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
@@ -107,9 +122,9 @@ class DatasetMenu(QMenu):
         movie.start()
 
         layout = QVBoxLayout(self.__loader_dialog)
-        layout.addWidget(QLabel("Trwa ładowanie...", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel(LOADING_TEXT, self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
-        layout.addWidget(QLabel("Może to zająć od kilku do kilkunastu minut.", self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel(TIME_DATASET_TEXT, self.__loader_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__loader_dialog.setLayout(layout)
         self.__loader_dialog.move(int((self.screen_geometry.width() - self.width()) / 2), int((self.screen_geometry.height() - self.height()) / 2 - 100))
@@ -120,38 +135,38 @@ class DatasetMenu(QMenu):
 
     def __clear_dataset(self):
         if self.parent.train_loader is None:
-            show_alert("Wiadomość!", "Żaden zbiór nie jest załadowany.", QMessageBox.Information)
+            show_alert(ALERT_MSG, NONE_DATASET_TEXT, QMessageBox.Information)
             return
         
         self.parent.train_loader = None
         self.parent.val_loader = None
         self.parent.test_loader = None
-        show_alert("Wiadomość!", "Załadowany zbiór został wyczyszczony.", QMessageBox.Information)
+        show_alert(ALERT_MSG, CLEARED_DATASET_TEXT, QMessageBox.Information)
 
     def __clear_cache(self):
         q = QMessageBox(self)
         q.setGeometry(0, 0, 300, 200)
-        q.setWindowTitle('Pytanie')
-        q.setText('Czy na pewno chcesz usunąć pobrane zbiory danych?')
+        q.setWindowTitle(ALERT_QUESTION)
+        q.setText(QUESTION_DATASET_DEL)
         q.setStandardButtons(QMessageBox.NoButton)
-        q.addButton('Tak', QMessageBox.YesRole)
-        q.addButton('Nie', QMessageBox.NoRole)
+        q.addButton(YES, QMessageBox.YesRole)
+        q.addButton(NO, QMessageBox.NoRole)
         q.move(int((self.screen_geometry.width() - self.width()) / 2) - 75, int((self.screen_geometry.height() - self.height()) / 2) - 50)
 
         q.exec_()
 
-        if q.clickedButton() and q.clickedButton().text() == 'Tak':
+        if q.clickedButton() and q.clickedButton().text() == 'Tak' or q.clickedButton().text() == 'Yes':
             cleared = clear_cache_directory()
             if cleared:
-                show_alert("Sukces!", "Zbiory danych został usunięte.", QMessageBox.Information)
+                show_alert(ALERT_SUCCESS, CLEARD_DATASET_TEXT, QMessageBox.Information)
             else:
-                show_alert("Błąd!", "Nie udało się usunąć zbiorów!.", QMessageBox.Warning)
+                show_alert(ALERT_ERROR, CLEARD_DATASET_FAILED_TEXT, QMessageBox.Warning)
         else:
             return
 
     def __show_sample(self):
         if self.parent.train_loader is None:
-            show_alert("Ostrzeżenie!", "Zbiór danych nie jest załadowany!\nNie można wykonać tej operacji bez załadowanego zbioru!", QMessageBox.Warning)
+            show_alert(ALERT_WARNING, DATASET_NOT_LOADED_TEXT, QMessageBox.Warning)
             return
         
         rand = random.randint(0, len(self.parent.train_loader))

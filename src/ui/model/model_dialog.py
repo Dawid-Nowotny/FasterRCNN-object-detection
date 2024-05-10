@@ -5,12 +5,18 @@ from PyQt5.QtCore import Qt
 from src.ui.config import model_options
 from src.ui.styles import LIST_STYLE
 
+from src.ui.data_shelter import DataShelter
+if DataShelter().lang == "pl":
+    from src.ui.translations.pl import MODEL_CHOOSE_TEXT
+else:
+    from src.ui.translations.en import MODEL_CHOOSE_TEXT
+
 class ModelDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.finished = False
         self.option = None
-        self.setWindowTitle("Lista wyboru modelu")
+        self.setWindowTitle(MODEL_CHOOSE_TEXT)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         screen_geometry = QApplication.desktop().screenGeometry()

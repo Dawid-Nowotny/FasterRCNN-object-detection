@@ -7,11 +7,17 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 
 from src.utils.plot_utils import plot_losses, plot_accuracies
 
+from .data_shelter import DataShelter
+if DataShelter().lang == "pl":
+    from .translations.pl import TRAINING_RESULTS_TITLE, MAP_TEST, MAP_VAL, MAP_50_TEST, MAP_50_VAL
+else:
+    from .translations.en import TRAINING_RESULTS_TITLE, MAP_TEST, MAP_VAL, MAP_50_TEST, MAP_50_VAL
+
 class TrainingResultsDialog(QDialog):
     def __init__(self, losses_list, val_losses_list, train_accuracy_list, accuracy_list, val_accuracy_list, test_mAP, val_mAP, parent=None):
         super().__init__(parent)
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Wyniki treningu")
+        self.setWindowTitle(TRAINING_RESULTS_TITLE)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
 
@@ -29,14 +35,14 @@ class TrainingResultsDialog(QDialog):
         hbox = QHBoxLayout()
 
         vbox1.addStretch()
-        vbox1.addWidget(QLabel("mAP na zbiorze testowym:", self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel(MAP_TEST, self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addWidget(QLabel(str(self.__test_mAP), self), alignment=QtCore.Qt.AlignCenter)
-        vbox1.addWidget(QLabel("mAP na zbiorze walidacyjnym:", self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel(MAP_VAL, self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addWidget(QLabel(str(self.__val_mAP), self), alignment=QtCore.Qt.AlignCenter)
 
-        vbox1.addWidget(QLabel("mAP_50 na zbiorze testowym:", self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel(MAP_50_TEST, self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addWidget(QLabel(str(self.__test_mAP_50), self), alignment=QtCore.Qt.AlignCenter)
-        vbox1.addWidget(QLabel("mAP_50 na zbiorze walidacyjnym:", self), alignment=QtCore.Qt.AlignCenter)
+        vbox1.addWidget(QLabel(MAP_50_VAL, self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addWidget(QLabel(str(self.__val_mAP_50), self), alignment=QtCore.Qt.AlignCenter)
         vbox1.addStretch()
 

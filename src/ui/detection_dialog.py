@@ -5,12 +5,17 @@ from PyQt5.QtCore import Qt
 from src.ui.show_alert import show_alert
 from src.ui.data_shelter import DataShelter
 
+if DataShelter().lang == "pl":
+    from .translations.pl import DETECTION_PARAMS_TITLE, USE_CUDA_TITLE, SCORE_TH_TITLE, IOU_TH_TITLE, OPERATION_FAILED, ALERT_ERROR
+else:
+    from .translations.en import DETECTION_PARAMS_TITLE, USE_CUDA_TITLE, SCORE_TH_TITLE, IOU_TH_TITLE, OPERATION_FAILED, ALERT_ERROR
+
 class SetDetectionDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.finished = False
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw parametry detekcji")
+        self.setWindowTitle(DETECTION_PARAMS_TITLE)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setFixedWidth(200)
@@ -32,15 +37,14 @@ class SetDetectionDialog(QDialog):
         self.__iou_threshold_detect.setMaximum(1.0)
         self.__iou_threshold_detect.setSingleStep(0.05)
 
-        self.__use_CUDA_detect = QCheckBox("Używaj CUDA")
+        self.__use_CUDA_detect = QCheckBox(USE_CUDA_TITLE)
 
     def __set_layouts(self):
         vbox = QVBoxLayout()
-
-        vbox.addWidget(QLabel("Próg wyniku", self), alignment=QtCore.Qt.AlignCenter)
+        vbox.addWidget(QLabel(SCORE_TH_TITLE, self), alignment=QtCore.Qt.AlignCenter)
         vbox.addWidget(self.__score_threshold_detect)
 
-        vbox.addWidget(QLabel("Próg iou", self), alignment=QtCore.Qt.AlignCenter)
+        vbox.addWidget(QLabel(IOU_TH_TITLE, self), alignment=QtCore.Qt.AlignCenter)
         vbox.addWidget(self.__iou_threshold_detect)
 
         vbox.addItem(QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
@@ -73,7 +77,7 @@ class SetDetectionDialog(QDialog):
             data_shelter.use_CUDA_detect = self.__use_CUDA_detect.isChecked()
 
         except Exception as e:
-            show_alert("Błąd!", f"Error: {str(e)}\nNie udało się wykonac operacji", QMessageBox.Critical)
+            show_alert(ALERT_ERROR, f"Error: {str(e)}\n{OPERATION_FAILED}", QMessageBox.Critical)
             self.close()
 
         self.finished = True

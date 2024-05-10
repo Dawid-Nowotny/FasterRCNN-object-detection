@@ -10,18 +10,31 @@ from .training_params_dialog import SetTrainingDialog
 from .optim_params_dialog import SetOptimDialog
 from .scheduler_params_dialog import SetSchedulerDialog
 
+if DataShelter().lang == "pl":
+    from src.ui.translations.pl import (
+        TRAINING_MENU_NAME, TRAIN_MODEL_TEXT, OPTIM_PARAMS_TEXT, SCHEDULER_PARAMS_TEXT, CANT_START_TRANING_NO_DATASET_TEXT, CANT_START_TRANING_NO_MODEL_TEXT, 
+        MODEL_TRAINED_SUCCESSFULLY, TRAINING_INTERRUPTED, MODEL_TRANING_TEXT, MODEL_CURR_TRAINING_TEXT, USER_PATIENCE_TEXT, TIME_TRAINING_TEXT,
+        ALERT_WARNING, ALERT_SUCCESS, ALERT_INTERRUPTED
+    )
+else:
+    from src.ui.translations.en import (
+        TRAINING_MENU_NAME, TRAIN_MODEL_TEXT, OPTIM_PARAMS_TEXT, SCHEDULER_PARAMS_TEXT, CANT_START_TRANING_NO_DATASET_TEXT, CANT_START_TRANING_NO_MODEL_TEXT, 
+        MODEL_TRAINED_SUCCESSFULLY, TRAINING_INTERRUPTED, MODEL_TRANING_TEXT, MODEL_CURR_TRAINING_TEXT, USER_PATIENCE_TEXT, TIME_TRAINING_TEXT,
+        ALERT_WARNING, ALERT_SUCCESS, ALERT_INTERRUPTED
+    )
+
 class TrainingMenu(QMenu):
     def __init__(self, parent=None):
-        super().__init__("Trening", parent)
+        super().__init__(TRAINING_MENU_NAME, parent)
         self.parent = parent
 
-        train_model = QAction("Trenuj model", self)
+        train_model = QAction(TRAINING_MENU_NAME, self)
         train_model.triggered.connect(lambda: self.__run_training())
 
-        set_optim_params = QAction("Ustal parametry SGD", self)
+        set_optim_params = QAction(OPTIM_PARAMS_TEXT, self)
         set_optim_params.triggered.connect(lambda: self.__set_optim_params())
 
-        set_scheduler_params = QAction("Ustal parametry STEPLR", self)
+        set_scheduler_params = QAction(SCHEDULER_PARAMS_TEXT, self)
         set_scheduler_params.triggered.connect(lambda: self.__set_scheduler_params())
 
         self.addAction(train_model)
@@ -30,11 +43,11 @@ class TrainingMenu(QMenu):
 
     def __run_training(self):
         if self.parent.train_loader is None:
-            show_alert("Ostrzeżenie!", "Nie można rozpocząć treningu bez załądowanych danych.", QMessageBox.Warning)
+            show_alert(ALERT_WARNING, CANT_START_TRANING_NO_DATASET_TEXT, QMessageBox.Warning)
             return
         
         if self.parent.model is None:
-            show_alert("Ostrzeżenie!", "Nie można rozpocząć treningu bez stworzonego modelu.", QMessageBox.Warning)
+            show_alert(ALERT_WARNING, CANT_START_TRANING_NO_MODEL_TEXT, QMessageBox.Warning)
             return
         
         dialog = SetTrainingDialog()
@@ -64,7 +77,7 @@ class TrainingMenu(QMenu):
 
     def __on_training_finished(self):
         self.__training_dialog.close()
-        show_alert("Sukces!", "Model został wytrenowany!", QMessageBox.Information)
+        show_alert(ALERT_SUCCESS,MODEL_TRAINED_SUCCESSFULLY, QMessageBox.Information)
 
     def __on_model_trained(self, data):
         model, losses_list, val_losses_list, train_accuracy_list, test_accuracy_list, val_accuracy_list, test_mAP, val_mAP = data
@@ -82,7 +95,7 @@ class TrainingMenu(QMenu):
     def __on_dialog_close(self, event):
         if self.__training_thread.isRunning():
             self.__training_thread.terminate()
-            show_alert("Przerwano!", "Trening został przerwany!", QMessageBox.Warning, self.__training_dialog)
+            show_alert(ALERT_INTERRUPTED, TRAINING_INTERRUPTED, QMessageBox.Warning, self.__training_dialog)
             self.__training_dialog.lower()
             event.accept()
 
@@ -90,7 +103,7 @@ class TrainingMenu(QMenu):
         screen_geometry = QApplication.desktop().screenGeometry()
         self.__training_dialog = QDialog(self)
         self.__training_dialog.setModal(True)
-        self.__training_dialog.setWindowTitle("Trenowanie modelu")
+        self.__training_dialog.setWindowTitle(MODEL_TRANING_TEXT)
         self.__training_dialog.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.__training_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
         self.__training_dialog.closeEvent = self.__on_dialog_close
@@ -101,12 +114,12 @@ class TrainingMenu(QMenu):
         movie.setScaledSize(QtCore.QSize(120, 120))
         gif_label.setMovie(movie)
         movie.start()
-
+        
         layout = QVBoxLayout(self.__training_dialog)
-        layout.addWidget(QLabel("Trwa trening modelu...", self.__training_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel(MODEL_CURR_TRAINING_TEXT, self.__training_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.addWidget(gif_label, alignment=QtCore.Qt.AlignCenter)
-        layout.addWidget(QLabel("Badź cierpliwy.", self.__training_dialog, alignment=QtCore.Qt.AlignCenter))
-        layout.addWidget(QLabel("Może to zająć od kilku minut do kilkunastu godzin\nw zależności od konfiguracji parametrów.",
+        layout.addWidget(QLabel(USER_PATIENCE_TEXT, self.__training_dialog, alignment=QtCore.Qt.AlignCenter))
+        layout.addWidget(QLabel(TIME_TRAINING_TEXT,
                                 self.__training_dialog, alignment=QtCore.Qt.AlignCenter))
         layout.setAlignment(QtCore.Qt.AlignCenter)
         self.__training_dialog.setLayout(layout)

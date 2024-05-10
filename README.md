@@ -54,7 +54,7 @@ These instructions will get you a copy of the project up and running on your loc
    ```bash
     python main.py
    ```
-   By default, the application interface is displayed in Polish. If you prefer to run the application in English, use the --en flag when launching:
+   By default, the application interface is displayed in Polish. If you prefer to run the application in English, use the <br>--en flag when launching:
    ```bash
     python main.py --en
    ```

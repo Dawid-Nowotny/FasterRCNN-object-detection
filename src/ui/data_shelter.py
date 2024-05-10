@@ -65,4 +65,7 @@ class DataShelter:
             cls._instance.iou_threshold_detect = 0.6
             cls._instance.use_CUDA_detect = True
 
+            #Language
+            cls._instance.lang = "en"
+
         return cls._instance

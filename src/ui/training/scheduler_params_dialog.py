@@ -5,11 +5,16 @@ from PyQt5.QtCore import Qt
 from src.ui.show_alert import show_alert
 from src.ui.data_shelter import DataShelter
 
+if DataShelter().lang == "pl":
+    from src.ui.translations.pl import SCHEDULER_TITLE, OPERATION_FAILED, ALERT_ERROR
+else:
+    from src.ui.translations.en import SCHEDULER_TITLE, OPERATION_FAILED, ALERT_ERROR
+
 class SetSchedulerDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw parametry STEPLR")
+        self.setWindowTitle(SCHEDULER_TITLE)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setFixedWidth(200)
@@ -62,7 +67,7 @@ class SetSchedulerDialog(QDialog):
             data_shelter.gamma = self.__gamma.value()
             
         except Exception as e:
-            show_alert("Błąd!", f"Error: {str(e)}\nNie udało się wykonac operacji", QMessageBox.Critical)
+            show_alert(ALERT_ERROR, f"Error: {str(e)}\n{OPERATION_FAILED}", QMessageBox.Critical)
             self.close()
 
         self.close()

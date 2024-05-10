@@ -5,12 +5,17 @@ from PyQt5.QtCore import Qt
 from src.ui.show_alert import show_alert
 from src.ui.data_shelter import DataShelter
 
+if DataShelter().lang == "pl":
+    from src.ui.translations.pl import DETECTION_PARAMS_TEXT, USE_CUDA_TITLE, EPOCH_NUM_TITLE, IOU_TH_TITLE, ALERT_ERROR, OPERATION_FAILED
+else:
+    from src.ui.translations.en import DETECTION_PARAMS_TEXT, USE_CUDA_TITLE, EPOCH_NUM_TITLE, IOU_TH_TITLE, ALERT_ERROR, OPERATION_FAILED
+
 class SetTrainingDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.finished = False
         self.setWindowIcon(QtGui.QIcon("src\\ui\\resources\\icon.png"))
-        self.setWindowTitle("Ustaw parametry detekcji")
+        self.setWindowTitle(DETECTION_PARAMS_TEXT)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowFlag(QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setFixedWidth(200)
@@ -31,15 +36,15 @@ class SetTrainingDialog(QDialog):
         self.__iou_threshold.setMaximum(1.0)
         self.__iou_threshold.setSingleStep(0.05)
 
-        self.__use_CUDA = QCheckBox("Używaj CUDA")
+        self.__use_CUDA = QCheckBox(USE_CUDA_TITLE)
 
     def __set_layouts(self):
         vbox = QVBoxLayout()
-
-        vbox.addWidget(QLabel("Liczba epok", self), alignment=QtCore.Qt.AlignCenter)
+        
+        vbox.addWidget(QLabel(EPOCH_NUM_TITLE, self), alignment=QtCore.Qt.AlignCenter)
         vbox.addWidget(self.__epochs)
 
-        vbox.addWidget(QLabel("Próg iou", self), alignment=QtCore.Qt.AlignCenter)
+        vbox.addWidget(QLabel(IOU_TH_TITLE, self), alignment=QtCore.Qt.AlignCenter)
         vbox.addWidget(self.__iou_threshold)
 
         vbox.addItem(QSpacerItem(0, 15, QSizePolicy.Minimum, QSizePolicy.Fixed))
@@ -73,7 +78,7 @@ class SetTrainingDialog(QDialog):
             data_shelter.use_CUDA = self.__use_CUDA.isChecked()
 
         except Exception as e:
-            show_alert("Błąd!", f"Error: {str(e)}\nNie udało się wykonac operacji", QMessageBox.Critical)
+            show_alert(ALERT_ERROR, f"Error: {str(e)}\n{OPERATION_FAILED}", QMessageBox.Critical)
             self.close()
 
         self.finished = True
